@@ -1,0 +1,26 @@
+---
+import { whatsappHref } from '@/lib/whatsapp';
+
+interface Props {
+  /** Clases de posición. Por defecto, esquina inferior derecha. */
+  class?: string;
+}
+
+const { class: className = 'bottom-6' } = Astro.props;
+const href = whatsappHref('Hola, tengo una consulta sobre los espacios de Altivia.');
+---
+
+<a
+  href={href}
+  target="_blank"
+  rel="noopener"
+  aria-label="Consultar por WhatsApp"
+  class:list={[
+    'fixed right-4 z-50 inline-flex size-14 items-center justify-center rounded-pill bg-[#25D366] text-white shadow-soft transition-transform hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-2 md:right-6',
+    className,
+  ]}
+>
+  <svg viewBox="0 0 32 32" class="size-7" fill="currentColor" aria-hidden="true">
+    <path d="M16.003 3C8.83 3 3 8.83 3 16c0 2.29.6 4.52 1.74 6.49L3 29l6.7-1.72A12.94 12.94 0 0 0 16.003 29C23.17 29 29 23.17 29 16S23.17 3 16.003 3Zm0 23.7c-1.95 0-3.86-.53-5.53-1.52l-.4-.24-3.98 1.02 1.06-3.88-.26-.4A10.66 10.66 0 0 1 5.3 16c0-5.9 4.8-10.7 10.7-10.7S26.7 10.1 26.7 16s-4.8 10.7-10.7 10.7Zm5.87-8c-.32-.16-1.9-.94-2.2-1.04-.3-.1-.5-.16-.72.16-.22.32-.83 1.04-1.02 1.26-.19.22-.38.24-.7.08-.32-.16-1.36-.5-2.59-1.6-.96-.85-1.6-1.9-1.79-2.22-.19-.32-.02-.5.14-.66.14-.14.32-.38.48-.57.16-.19.22-.32.32-.54.1-.22.05-.4-.03-.57-.08-.16-.72-1.73-.99-2.37-.26-.62-.52-.54-.72-.55h-.62c-.22 0-.57.08-.86.4-.3.32-1.13 1.1-1.13 2.68s1.16 3.11 1.32 3.33c.16.22 2.28 3.48 5.52 4.88.77.33 1.37.53 1.84.68.77.25 1.48.21 2.04.13.62-.09 1.9-.78 2.17-1.53.27-.75.27-1.4.19-1.53-.08-.13-.3-.21-.62-.37Z" />
+  </svg>
+</a>

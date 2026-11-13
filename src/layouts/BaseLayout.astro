@@ -1,5 +1,6 @@
 ---
 import Header from '@/components/sections/Header.astro';
+import WhatsAppFab from '@/components/ui/WhatsAppFab.astro';
 import { SITE } from '@/config/site';
 import '@/styles/global.css';
 
@@ -10,9 +11,20 @@ interface Props {
   image?: string;
   /** Header oscuro opaco, para páginas sin hero oscuro. */
   solidHeader?: boolean;
+  /** Botón flotante de WhatsApp (consulta general). */
+  whatsappFab?: boolean;
+  /** Clases de posición del botón flotante. */
+  fabClass?: string;
 }
 
-const { title, description = SITE.description, image, solidHeader = false } = Astro.props;
+const {
+  title,
+  description = SITE.description,
+  image,
+  solidHeader = false,
+  whatsappFab = false,
+  fabClass,
+} = Astro.props;
 const pageTitle = title ? `${title} | ${SITE.name}` : SITE.name;
 const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : undefined;
 ---
@@ -41,5 +53,6 @@ const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : un
     <main id="main">
       <slot />
     </main>
+    {whatsappFab && <WhatsAppFab class={fabClass} />}
   </body>
 </html>

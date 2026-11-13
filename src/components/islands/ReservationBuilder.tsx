@@ -8,6 +8,7 @@ import {
   type TimeSlot,
   toTime,
 } from '@/lib/quote';
+import { buildQuoteMessage, whatsappHref } from '@/lib/whatsapp';
 
 export interface ComplementOption {
   slug: string;
@@ -25,6 +26,8 @@ export interface ComplementOption {
 
 interface Props {
   spaceName: string;
+  /** URL absoluta de la página del espacio, para el mensaje de WhatsApp. */
+  spaceUrl: string;
   locationLabel: string;
   pricePerHour: number;
   maxCapacity: number;
@@ -107,6 +110,7 @@ function Stepper({
 
 export default function ReservationBuilder({
   spaceName,
+  spaceUrl,
   locationLabel,
   pricePerHour,
   maxCapacity,
@@ -176,6 +180,27 @@ export default function ReservationBuilder({
     });
 
   const timeRange = hours > 0 ? `${formatTime(startTime)} – ${formatTime(endTime)}` : null;
+
+  const missing = [
+    !date && 'la fecha',
+    !timeRange && 'el horario',
+    guestsNumber < 1 && 'las personas',
+  ].filter(Boolean) as string[];
+  const canQuote = quote.complete && timeRange !== null;
+  const quoteHref = canQuote
+    ? whatsappHref(
+        buildQuoteMessage({
+          spaceName,
+          locationLabel,
+          spaceUrl,
+          dateLabel: formatDate(date),
+          timeRange,
+          hours,
+          guests: guestsNumber,
+          quote,
+        }),
+      )
+    : undefined;
 
   return (
     <section id="reserva" aria-labelledby="reserva-title" class="flex scroll-mt-28 flex-col gap-6">
@@ -363,6 +388,19 @@ export default function ReservationBuilder({
               <li key={w}>{w}</li>
             ))}
           </ul>
+        )}
+
+        <a
+          href={quoteHref}
+          target="_blank"
+          rel="noopener"
+          aria-disabled={canQuote ? undefined : 'true'}
+          class="inline-flex items-center justify-center rounded-pill bg-primary px-5 py-2.5 text-small font-semibold text-primary-contrast transition-colors hover:bg-primary-hover aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:hover:bg-primary"
+        >
+          Cotizar por WhatsApp
+        </a>
+        {!canQuote && (
+          <p class="text-small text-text-muted">Elige {missing.join(', ')} para cotizar.</p>
         )}
 
         <p class="text-small text-text-muted">
