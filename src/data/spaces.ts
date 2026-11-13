@@ -27,7 +27,6 @@ export const LOCATIONS: readonly { value: string; label: string }[] = [
 export const SPACES: readonly Space[] = [
   // Magdalena
   {
-    id: 'f632a16b-2e43-4cb1-ab44-55ab55b22368',
     slug: 'parrilla-magdalena',
     type: 'parrilla',
     name: 'Parrilla Magdalena',
@@ -40,7 +39,6 @@ export const SPACES: readonly Space[] = [
     imageAlt: 'Carne asada lista para servir en la parrilla de Magdalena',
   },
   {
-    id: '33c225c2-7abc-44c3-958b-631e86e51179',
     slug: 'parrilla-jardin-magdalena',
     type: 'parrilla-jardin',
     name: 'Parrilla Jardín Magdalena',
@@ -53,7 +51,6 @@ export const SPACES: readonly Space[] = [
     imageAlt: 'Jardín con sillas y decoración floral para eventos en Magdalena',
   },
   {
-    id: 'ab83ca69-eb83-4448-a6c3-ebe2bb2b4343',
     slug: 'sum-magdalena',
     type: 'sum',
     name: 'SUM Magdalena',
@@ -67,7 +64,6 @@ export const SPACES: readonly Space[] = [
   },
   // Miraflores
   {
-    id: '9e8aff9d-7861-4ed2-8695-c54de859e525',
     slug: 'parrilla-miraflores',
     type: 'parrilla',
     name: 'Parrilla Miraflores',
@@ -80,7 +76,6 @@ export const SPACES: readonly Space[] = [
     imageAlt: 'Parrillada variada con brochetas y salsas en Miraflores',
   },
   {
-    id: '8bd413e6-8050-4737-8357-cdd7f2270cb4',
     slug: 'parrilla-jardin-miraflores',
     type: 'parrilla-jardin',
     name: 'Parrilla Jardín Miraflores',
@@ -93,7 +88,6 @@ export const SPACES: readonly Space[] = [
     imageAlt: 'Jardín con sillas y decoración floral para eventos en Miraflores',
   },
   {
-    id: '3d69bb41-665b-4207-8029-a94e86a89c3e',
     slug: 'sum-miraflores',
     type: 'sum',
     name: 'SUM Miraflores',
@@ -107,7 +101,6 @@ export const SPACES: readonly Space[] = [
   },
   // San Borja
   {
-    id: 'df23eff7-7d47-4dcc-9636-165f0154d006',
     slug: 'parrilla-san-borja',
     type: 'parrilla',
     name: 'Parrilla San Borja',
@@ -120,7 +113,6 @@ export const SPACES: readonly Space[] = [
     imageAlt: 'Costillas a la parrilla servidas en tabla en San Borja',
   },
   {
-    id: '99ebd9ea-6021-431c-8688-5cf97b242ce9',
     slug: 'parrilla-jardin-san-borja',
     type: 'parrilla-jardin',
     name: 'Parrilla Jardín San Borja',
@@ -133,7 +125,6 @@ export const SPACES: readonly Space[] = [
     imageAlt: 'Jardín con sillas y decoración floral para eventos en San Borja',
   },
   {
-    id: '0bf45ca5-a8f3-4311-a0b7-6a07354a54d6',
     slug: 'sum-san-borja',
     type: 'sum',
     name: 'SUM San Borja',
