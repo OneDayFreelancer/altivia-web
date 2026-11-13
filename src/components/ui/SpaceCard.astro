@@ -18,9 +18,9 @@ const unit = space.priceUnit === 'hora' ? 'hora' : 'día';
 
 <a
   href={spaceHref(space)}
-  class:list={['group relative block h-full min-h-64 rounded-card', className]}
+  class:list={['group relative block h-full min-h-64', className]}
 >
-  <div class="absolute inset-0 overflow-hidden rounded-card bg-surface-alt">
+  <div class="absolute inset-0 overflow-hidden bg-surface-alt">
     <Picture
       src={space.image}
       alt={space.imageAlt}
