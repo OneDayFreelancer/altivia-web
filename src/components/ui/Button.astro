@@ -1,0 +1,40 @@
+---
+interface Props {
+  variant?: 'primary' | 'dark' | 'outline';
+  href?: string;
+  disabled?: boolean;
+  type?: 'button' | 'submit' | 'reset';
+  class?: string;
+}
+
+const {
+  variant = 'primary',
+  href,
+  disabled = false,
+  type = 'button',
+  class: className,
+} = Astro.props;
+
+const base =
+  'inline-flex items-center justify-center gap-2 rounded-pill px-5 py-2.5 text-small font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50 aria-disabled:cursor-not-allowed aria-disabled:opacity-50';
+
+const variants = {
+  primary: 'bg-primary text-primary-contrast hover:bg-primary-hover',
+  dark: 'bg-dark text-dark-contrast hover:bg-dark-hover',
+  outline: 'border border-text bg-transparent text-text hover:bg-text hover:text-surface',
+};
+
+const classes = [base, variants[variant], className].join(' ');
+---
+
+{
+  href ? (
+    <a href={disabled ? undefined : href} class={classes} aria-disabled={disabled ? 'true' : undefined}>
+      <slot />
+    </a>
+  ) : (
+    <button type={type} class={classes} disabled={disabled}>
+      <slot />
+    </button>
+  )
+}

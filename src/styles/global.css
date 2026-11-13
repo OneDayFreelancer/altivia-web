@@ -1,6 +1,52 @@
 @import "tailwindcss";
-@import "@fontsource-variable/raleway";
+@import "@fontsource-variable/montserrat";
 
+/*
+ * Design tokens (ONE-7). Referencia visual: diseño "Finpro" (blanco, negro, grises) con acento verde lima.
+ * Contraste AA verificado: text 19:1, text-muted 5.7:1 sobre blanco; texto oscuro sobre lima 16:1.
+ */
 @theme {
-  --font-sans: "Raleway Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Montserrat Variable", ui-sans-serif, system-ui, sans-serif;
+
+  /* Color */
+  --color-primary: #c8f53c;
+  --color-primary-hover: #b3df2a;
+  --color-primary-contrast: #0a0a0a;
+  --color-dark: #0a0a0a;
+  --color-dark-hover: #262626;
+  --color-dark-contrast: #ffffff;
+  --color-text: #0a0a0a;
+  --color-text-muted: #666666;
+  --color-surface: #ffffff;
+  --color-surface-alt: #f7f7f7;
+  --color-border: #e5e5e5;
+  --color-focus: #0a0a0a;
+
+  /* Tipografía (tamaño / interlineado) */
+  --text-h1: 3.5rem;
+  --text-h1--line-height: 1.1;
+  --text-h2: 2.25rem;
+  --text-h2--line-height: 1.2;
+  --text-h3: 1.5rem;
+  --text-h3--line-height: 1.3;
+  --text-h4: 1.125rem;
+  --text-h4--line-height: 1.4;
+  --text-body: 1rem;
+  --text-body--line-height: 1.6;
+  --text-small: 0.8125rem;
+  --text-small--line-height: 1.5;
+
+  /* Radios */
+  --radius-card: 1rem;
+  --radius-pill: 9999px;
+
+  /* Sombras */
+  --shadow-soft: 0 8px 30px rgb(0 0 0 / 0.08);
+}
+
+@layer base {
+  :focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+  }
 }

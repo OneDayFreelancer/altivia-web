@@ -1,0 +1,18 @@
+---
+interface Props {
+  active?: boolean;
+  class?: string;
+}
+
+const { active = false, class: className } = Astro.props;
+
+const base =
+  'inline-flex items-center gap-2 rounded-pill border px-4 py-2 text-small font-medium transition-colors';
+const state = active
+  ? 'border-dark bg-dark text-dark-contrast'
+  : 'border-border bg-surface text-text hover:border-text';
+---
+
+<button type="button" aria-pressed={active ? 'true' : 'false'} class={[base, state, className].join(' ')}>
+  <slot />
+</button>
