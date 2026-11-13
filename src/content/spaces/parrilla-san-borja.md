@@ -12,16 +12,21 @@ images:
     alt: Carne asada lista para servir en la parrilla
   - src: ../../assets/spaces/parrilla-2.jpg
     alt: Parrillada variada con brochetas y salsas
+schedule:
+  default:
+    - "10:00-14:00"
+    - "14:00-18:00"
+    - "18:00-24:00"
 amenities:
   - Parrilla a carbón
   - Mesas y bancas
   - Zona de lavado
   - Baño privado
 complements:
-  - parlante
   - sillas
   - mesa
-  - proyector
+  - equipo-de-sonido
+  - barman
 ---
 
 Texto de prueba. Reemplazar con la descripción real de la parrilla de San Borja: ambiente, distribución y reglas de uso.

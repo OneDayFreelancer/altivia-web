@@ -13,16 +13,21 @@ images:
     alt: Parrillada variada con brochetas y salsas
   - src: ../../assets/spaces/parrilla-3.jpg
     alt: Costillas a la parrilla servidas en tabla
+schedule:
+  default:
+    - "10:00-14:00"
+    - "14:00-18:00"
+    - "18:00-24:00"
 amenities:
   - Parrilla a carbón
   - Mesas y bancas
   - Zona de lavado
   - Baño privado
 complements:
-  - parlante
   - sillas
   - mesa
-  - proyector
+  - equipo-de-sonido
+  - barman
 ---
 
 Texto de prueba. Reemplazar con la descripción real de la parrilla de Magdalena: ambiente, distribución y reglas de uso.

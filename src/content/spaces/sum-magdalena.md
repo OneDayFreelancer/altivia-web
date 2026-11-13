@@ -13,16 +13,24 @@ images:
     alt: Salón de eventos decorado con mesas puestas
   - src: ../../assets/spaces/sum-3.jpg
     alt: Mesa larga con arreglos florales para banquete
+schedule:
+  default:
+    - "10:00-14:00"
+    - "14:00-18:00"
+    - "18:00-24:00"
 amenities:
   - Salón techado
   - Aire acondicionado
   - Cocina equipada
   - Baño privado
 complements:
-  - parlante
   - sillas
   - mesa
   - proyector
+  - pantalla
+  - laptop
+  - equipo-de-sonido
+  - dj
 ---
 
 Texto de prueba. Reemplazar con la descripción real de el salón de usos múltiples de Magdalena: ambiente, distribución y reglas de uso.

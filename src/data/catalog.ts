@@ -12,12 +12,12 @@ export const LOCATIONS = [
   { value: 'san-borja', label: 'San Borja' },
 ] as const;
 
-/** Complementos que se pueden sumar al alquiler (ONE-22/23). */
-export const COMPLEMENTS = [
-  { value: 'parlante', label: 'Parlante' },
-  { value: 'sillas', label: 'Sillas' },
-  { value: 'mesa', label: 'Mesa' },
-  { value: 'proyector', label: 'Proyector' },
+export const COMPLEMENT_CATEGORIES = [
+  { value: 'mobiliario', label: 'Mobiliario' },
+  { value: 'audiovisual', label: 'Audiovisual' },
+  { value: 'tecnologia', label: 'Tecnología' },
+  { value: 'servicio', label: 'Servicio' },
+  { value: 'otros', label: 'Otros' },
 ] as const;
 
 export const PRICE_UNITS = ['hora', 'dia'] as const;
@@ -25,7 +25,7 @@ export const PRICE_UNITS = ['hora', 'dia'] as const;
 type Values<T extends readonly { value: string }[]> = T[number]['value'];
 export type SpaceType = Values<typeof SPACE_TYPES>;
 export type LocationSlug = Values<typeof LOCATIONS>;
-export type ComplementSlug = Values<typeof COMPLEMENTS>;
+export type ComplementCategory = Values<typeof COMPLEMENT_CATEGORIES>;
 export type PriceUnit = (typeof PRICE_UNITS)[number];
 
 /** Tupla no vacía de valores, requerida por `z.enum`. */

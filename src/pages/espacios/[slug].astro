@@ -1,10 +1,12 @@
 ---
 import { getImage } from 'astro:assets';
 import { render } from 'astro:content';
+import ReservationBuilder, { type ComplementOption } from '@/components/islands/ReservationBuilder';
 import SpaceGallery from '@/components/islands/SpaceGallery';
 import Button from '@/components/ui/Button.astro';
-import { COMPLEMENTS, getSpaces, LOCATIONS, SPACE_TYPES } from '@/data/spaces';
+import { getSpaceComplements, getSpaces, LOCATIONS, SPACE_TYPES } from '@/data/spaces';
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import { parseSlot, type TimeSlot, WEEKDAYS } from '@/lib/quote';
 import { whatsappHref } from '@/lib/whatsapp';
 
 export async function getStaticPaths() {
@@ -13,13 +15,35 @@ export async function getStaticPaths() {
 }
 
 const { space } = Astro.props;
-const { name, type, location, maxCapacity, priceFrom, priceUnit, images, amenities, complements } =
-  space.data;
+const { name, type, location, maxCapacity, priceFrom, priceUnit, images, amenities } = space.data;
 
 const typeLabel = SPACE_TYPES.find((t) => t.value === type)?.label ?? type;
 const locationLabel = LOCATIONS.find((l) => l.value === location)?.label ?? location;
 const unit = priceUnit === 'hora' ? 'hora' : 'día';
-const complementLabels = complements.map((c) => COMPLEMENTS.find((x) => x.value === c)?.label ?? c);
+const hourly = priceUnit === 'hora';
+
+// Turnos por día de la semana (0 = domingo): el día específico reemplaza al `default`.
+const { schedule } = space.data;
+const slotsByWeekday: TimeSlot[][] = WEEKDAYS.map((day) =>
+  (schedule[day] ?? schedule.default).map((text) => parseSlot(text) as TimeSlot),
+);
+
+// Complementos con imagen optimizada (la isla Preact no puede usar astro:assets).
+const complements: ComplementOption[] = await Promise.all(
+  (await getSpaceComplements(space)).map(async (c) => ({
+    slug: c.id,
+    name: c.data.name,
+    category: c.data.category,
+    description: c.body ?? '',
+    image: (await getImage({ src: c.data.image.src, width: 160, height: 160, format: 'webp' })).src,
+    alt: c.data.image.alt,
+    pricing: c.data.pricing,
+    price: c.data.price,
+    maxQuantity: c.data.maxQuantity,
+    maxHours: c.data.pricing === 'hora' ? c.data.maxHours : undefined,
+    capacity: c.data.capacity,
+  })),
+);
 
 const { Content } = await render(space);
 
@@ -82,15 +106,16 @@ const quoteHref = whatsappHref(
           </section>
         )}
 
-        {complementLabels.length > 0 && (
-          <section aria-labelledby="complements-title" class="flex flex-col gap-3">
-            <h2 id="complements-title" class="text-h3 font-semibold">Complementos disponibles</h2>
-            <ul class="flex flex-wrap gap-2 text-small font-medium">
-              {complementLabels.map((c) => (
-                <li class="rounded-pill bg-surface-alt px-3 py-1">{c}</li>
-              ))}
-            </ul>
-          </section>
+        {hourly && (
+          <ReservationBuilder
+            client:load
+            spaceName={name}
+            locationLabel={locationLabel}
+            pricePerHour={priceFrom}
+            maxCapacity={maxCapacity}
+            complements={complements}
+            slotsByWeekday={slotsByWeekday}
+          />
         )}
       </div>
 
@@ -99,7 +124,8 @@ const quoteHref = whatsappHref(
           <p class="text-small text-text-muted">Precio base</p>
           <p class="text-h2 font-semibold">S/ {priceFrom} <span class="text-body font-medium text-text-muted">/ {unit}</span></p>
           <p class="text-small text-text-muted">Capacidad máxima: {maxCapacity} personas</p>
-          <Button href={quoteHref} class="w-full">Cotizar por WhatsApp</Button>
+          {hourly && <Button href="#reserva" class="w-full">Armar mi reserva</Button>}
+          <Button href={quoteHref} variant="outline" class="w-full">Consultar por WhatsApp</Button>
         </div>
       </aside>
     </div>
@@ -110,6 +136,6 @@ const quoteHref = whatsappHref(
       <span class="block text-small text-text-muted">Desde</span>
       <span class="font-semibold">S/ {priceFrom} / {unit}</span>
     </p>
-    <Button href={quoteHref}>Cotizar</Button>
+    <Button href={hourly ? '#reserva' : quoteHref}>{hourly ? 'Reservar' : 'Cotizar'}</Button>
   </div>
 </BaseLayout>
