@@ -1,0 +1,41 @@
+---
+import { Picture } from 'astro:assets';
+import { HERO } from '@/data/hero';
+
+const { title, tags, description, image, imageAlt } = HERO;
+---
+
+<section aria-labelledby="hero-title" class="px-4 pb-6 pt-20 md:px-8">
+  <div class="relative mx-auto min-h-[34rem] max-w-7xl overflow-hidden rounded-card md:min-h-[40rem]">
+    <Picture
+      src={image}
+      alt={imageAlt}
+      widths={[640, 1024, 1600, 2400]}
+      sizes="(min-width: 1280px) 1280px, 100vw"
+      formats={['avif', 'webp']}
+      loading="eager"
+      fetchpriority="high"
+      pictureAttributes={{ class: 'absolute inset-0 block h-full w-full' }}
+      class="h-full w-full object-cover"
+    />
+    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/45 to-black/20" aria-hidden="true"></div>
+
+    <div class="relative flex min-h-[inherit] flex-col justify-end gap-6 p-6 text-white md:flex-row md:items-end md:justify-between md:gap-12 md:p-12">
+      <div class="max-w-2xl">
+        <ul class="mb-5 flex flex-wrap gap-2">
+          {
+            tags.map((tag) => (
+              <li class="rounded-pill border border-white/40 bg-black/30 px-4 py-2 text-small font-medium backdrop-blur-sm">
+                {tag}
+              </li>
+            ))
+          }
+        </ul>
+        <h1 id="hero-title" class="text-[2.25rem] font-semibold leading-[1.1] text-balance sm:text-5xl md:text-h1">
+          {title}
+        </h1>
+      </div>
+      <p class="max-w-sm text-body text-white/90 md:pb-2">{description}</p>
+    </div>
+  </div>
+</section>
