@@ -1,0 +1,15 @@
+---
+import Button from '@/components/ui/Button.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Página no encontrada" solidHeader>
+  <section class="mx-auto flex max-w-3xl flex-col items-start gap-6 px-4 pb-24 pt-36 md:px-8">
+    <p class="text-small font-semibold text-text-muted">Error 404</p>
+    <h1 class="text-3xl font-semibold text-balance md:text-h2">No encontramos lo que buscas</h1>
+    <p class="text-body text-text-muted">
+      El espacio o la página no existe, o cambió de dirección. Revisa nuestros espacios disponibles.
+    </p>
+    <Button href="/#espacios">Ver espacios</Button>
+  </section>
+</BaseLayout>

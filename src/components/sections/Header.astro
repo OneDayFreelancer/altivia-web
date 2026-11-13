@@ -2,6 +2,13 @@
 import Button from '@/components/ui/Button.astro';
 import { AUTH_LINKS, LOCALES, NAV_ITEMS, SITE } from '@/config/site';
 
+interface Props {
+  /** Fondo oscuro opaco, para páginas sin hero oscuro detrás del header. */
+  solid?: boolean;
+}
+
+const { solid = false } = Astro.props;
+
 const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
 const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
 const currentLocale = SITE.locale;
@@ -13,7 +20,12 @@ const linkClass = (href: string) =>
 
 <header
   id="site-header"
-  class="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-black/30 text-white backdrop-blur-md transition-colors data-[scrolled=true]:bg-black/60"
+  class:list={[
+    'fixed inset-x-0 top-0 z-50 border-b border-white/10 text-white',
+    solid
+      ? 'bg-dark'
+      : 'bg-black/30 backdrop-blur-md transition-colors data-[scrolled=true]:bg-black/60',
+  ]}
 >
   <a
     href="#main"
