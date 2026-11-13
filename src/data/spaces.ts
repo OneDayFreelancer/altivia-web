@@ -141,3 +141,9 @@ export const SPACES: readonly Space[] = [
 /** Mayor capacidad registrada por tipo de espacio (para las tarjetas de categoría). */
 export const maxCapacityByType = (type: SpaceType): number =>
   Math.max(...SPACES.filter((s) => s.type === type).map((s) => s.maxCapacity));
+
+/** Espacios "más solicitados" de la home. El orden del array define el bento (grande, vertical, 2 pequeñas). */
+export const FEATURED_SPACES: readonly Space[] = SPACES.filter((s) => s.featured);
+
+/** Ruta del detalle del espacio (ONE-21). */
+export const spaceHref = (space: Space): string => `/espacios/${space.id}`;

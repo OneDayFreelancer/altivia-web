@@ -1,0 +1,44 @@
+---
+import { Picture } from 'astro:assets';
+import { spaceHref } from '@/data/spaces';
+import type { Space } from '@/types/space';
+
+interface Props {
+  space: Space;
+  /** Tamaño de imagen a pedir según el hueco del bento. */
+  sizes: string;
+  /** Muestra la capacidad máxima (solo en la tarjeta grande). */
+  showCapacity?: boolean;
+  class?: string;
+}
+
+const { space, sizes, showCapacity = false, class: className } = Astro.props;
+const unit = space.priceUnit === 'hora' ? 'hora' : 'día';
+---
+
+<a
+  href={spaceHref(space)}
+  class:list={['group relative block h-full min-h-64 rounded-card', className]}
+>
+  <div class="absolute inset-0 overflow-hidden rounded-card bg-surface-alt">
+    <Picture
+      src={space.image}
+      alt={space.imageAlt}
+      widths={[480, 768, 1200]}
+      sizes={sizes}
+      formats={['avif', 'webp']}
+      loading="lazy"
+      pictureAttributes={{ class: 'block h-full w-full' }}
+      class="h-full w-full object-cover motion-safe:transition-transform motion-safe:duration-500 group-hover:scale-105 group-focus-visible:scale-105"
+    />
+    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" aria-hidden="true"></div>
+  </div>
+
+  <div class="absolute inset-x-0 bottom-0 flex flex-col gap-1 p-5 text-white">
+    <h3 class="text-h4 font-semibold">{space.name}</h3>
+    <p class="text-small">
+      Desde <span class="font-semibold">S/ {space.priceFrom}</span> / {unit}
+      {showCapacity && <span> · Hasta {space.maxCapacity} personas</span>}
+    </p>
+  </div>
+</a>
