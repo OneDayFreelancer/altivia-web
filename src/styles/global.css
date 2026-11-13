@@ -1,0 +1,6 @@
+@import "tailwindcss";
+@import "@fontsource-variable/raleway";
+
+@theme {
+  --font-sans: "Raleway Variable", ui-sans-serif, system-ui, sans-serif;
+}

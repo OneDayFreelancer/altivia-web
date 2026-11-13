@@ -1,46 +1,47 @@
-# Astro Starter Kit: Basics
+# Altivia Web
 
-```sh
-npm create astro@latest -- --template basics
-```
+Astro 7 · Tailwind v4 · Preact · TypeScript · Biome · pnpm
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Comandos
 
-## 🚀 Project Structure
+| Comando        | Acción                             |
+| :------------- | :--------------------------------- |
+| `pnpm install` | Instala dependencias               |
+| `pnpm dev`     | Servidor local en `localhost:4321` |
+| `pnpm lint`    | Biome (lint + formato + imports)   |
+| `pnpm format`  | Biome con autocorrección           |
+| `pnpm check`   | Tipos con `astro check`            |
+| `pnpm build`   | Build estático en `dist/`          |
 
-Inside of your Astro project, you'll see the following folders and files:
+Copia `.env.example` a `.env` y completa `PUBLIC_WHATSAPP_NUMBER`.
+
+## Arquitectura
+
+Sigue la estructura oficial de Astro (`src/pages`, `layouts`, `components`, `styles`, `assets`),
+con capas explícitas por responsabilidad.
 
 ```text
-/
-├── public/
-│   └── favicon.svg
-├── src
-│   ├── assets
-│   │   └── astro.svg
-│   ├── components
-│   │   └── Welcome.astro
-│   ├── layouts
-│   │   └── Layout.astro
-│   └── pages
-│       └── index.astro
-└── package.json
+src/
+├── pages/              Rutas (solo componen secciones; sin lógica de negocio)
+├── layouts/            Estructura HTML compartida (BaseLayout)
+├── components/
+│   ├── ui/             Piezas reutilizables sin contexto de negocio (Button, Chip, Card)
+│   ├── sections/       Bloques de página (Hero, Buscador, Métricas…) que usan ui/
+│   └── islands/        Componentes Preact interactivos (client:*)
+├── config/             Constantes del sitio (nombre, navegación, WhatsApp)
+├── data/               Contenido estático tipado (propiedades, complementos, métricas)
+├── lib/                Funciones puras (precios, cotización, formato). Sin Astro/DOM
+├── types/              Tipos compartidos
+├── styles/             CSS global y tokens de Tailwind (`@theme`)
+└── assets/             Imágenes procesadas por Astro (`astro:assets`)
+public/                 Archivos servidos tal cual (favicon, robots.txt)
 ```
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+### Reglas de dependencia
 
-## 🧞 Commands
+`pages` → `sections` → `ui` → `lib`/`config`/`types`
 
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+- Una capa solo importa de las que están a su derecha. `lib`, `config` y `types` no importan componentes.
+- `islands/` se usa solo si hay interactividad; lo demás es Astro sin JS en el cliente.
+- Importar con el alias `@/` (ej. `@/components/ui/Button.astro`).
+- Contenido editable va en `data/` (o content collections cuando haya listados reales), no en los componentes.
