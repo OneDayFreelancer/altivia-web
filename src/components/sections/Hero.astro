@@ -1,0 +1,30 @@
+---
+import { Picture } from 'astro:assets';
+import { HERO } from '@/data/hero';
+
+const { title, image, imageAlt } = HERO;
+---
+
+<!-- `relative` + margen inferior: ONE-10 monta el buscador superpuesto al borde inferior. -->
+<section aria-labelledby="hero-title" class="relative mb-20">
+  <div class="relative min-h-[32rem] overflow-hidden md:min-h-[44rem]">
+    <Picture
+      src={image}
+      alt={imageAlt}
+      widths={[640, 1024, 1600, 2400]}
+      sizes="100vw"
+      formats={['avif', 'webp']}
+      loading="eager"
+      fetchpriority="high"
+      pictureAttributes={{ class: 'absolute inset-0 block h-full w-full' }}
+      class="h-full w-full object-cover"
+    />
+    <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-black/35 to-black/10" aria-hidden="true"></div>
+
+    <div class="relative mx-auto flex max-w-7xl justify-center px-4 pt-32 text-center text-white md:px-8 md:pt-40">
+      <h1 id="hero-title" class="max-w-3xl text-[2.25rem] font-semibold leading-[1.1] text-balance sm:text-5xl md:text-h1">
+        {title}
+      </h1>
+    </div>
+  </div>
+</section>
