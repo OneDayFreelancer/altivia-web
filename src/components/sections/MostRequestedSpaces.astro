@@ -1,0 +1,42 @@
+---
+import Button from '@/components/ui/Button.astro';
+import SpaceCard from '@/components/ui/SpaceCard.astro';
+import { SEARCH_ACTION } from '@/data/search';
+import { FEATURED_SPACES } from '@/data/spaces';
+
+// El orden de FEATURED_SPACES define el bento: grande, vertical, 2 pequeñas.
+const [large, vertical, smallTop, smallBottom] = FEATURED_SPACES;
+---
+
+<section aria-labelledby="most-requested-title" class="mx-auto max-w-7xl px-4 py-16 md:px-8 md:py-24">
+  <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between md:mb-12">
+    <h2 id="most-requested-title" class="text-3xl font-semibold text-balance md:text-h2">Espacios más solicitados</h2>
+    <Button href={SEARCH_ACTION} variant="outline" class="self-start sm:self-auto">
+      Ver todos los espacios
+      <span aria-hidden="true">→</span>
+    </Button>
+  </div>
+
+  <ul class="grid grid-cols-1 gap-4 md:h-[21rem] md:grid-cols-4 md:grid-rows-2 md:gap-6">
+    {large && (
+      <li class="h-56 md:col-span-2 md:row-span-2 md:h-auto">
+        <SpaceCard space={large} sizes="(min-width: 768px) 50vw, 100vw" showCapacity />
+      </li>
+    )}
+    {vertical && (
+      <li class="h-56 md:col-span-1 md:row-span-2 md:h-auto">
+        <SpaceCard space={vertical} sizes="(min-width: 768px) 25vw, 100vw" />
+      </li>
+    )}
+    {smallTop && (
+      <li class="h-40 md:col-span-1 md:h-auto">
+        <SpaceCard space={smallTop} sizes="(min-width: 768px) 25vw, 100vw" />
+      </li>
+    )}
+    {smallBottom && (
+      <li class="h-40 md:col-span-1 md:h-auto">
+        <SpaceCard space={smallBottom} sizes="(min-width: 768px) 25vw, 100vw" />
+      </li>
+    )}
+  </ul>
+</section>
