@@ -1,0 +1,88 @@
+---
+import Button from '@/components/ui/Button.astro';
+import { LOCATIONS, PRICE_RANGES, SEARCH_ACTION, SPACE_TYPES } from '@/data/search';
+
+const field = 'flex min-w-0 flex-1 flex-col gap-1 px-5 py-3 md:py-2';
+const label = 'text-small font-semibold text-text';
+const control =
+  'w-full rounded-md border border-border bg-surface px-3 py-2 text-body text-text md:border-0 md:bg-transparent md:px-0 md:py-1';
+---
+
+<form
+  id="search-form"
+  method="get"
+  action={SEARCH_ACTION}
+  novalidate
+  aria-label="Buscar espacios"
+  class="mx-auto flex max-w-6xl flex-col gap-1 rounded-card bg-surface p-3 shadow-soft md:flex-row md:items-center md:gap-0 md:divide-x md:divide-border md:rounded-pill md:p-2 md:pl-4"
+>
+  <div class={field}>
+    <label for="search-type" class={label}>Tipo de espacio</label>
+    <select id="search-type" name="type" class={control}>
+      <option value="">Todos</option>
+      {SPACE_TYPES.map((o) => <option value={o.value}>{o.label}</option>)}
+    </select>
+  </div>
+
+  <div class={field}>
+    <label for="search-price" class={label}>Precio</label>
+    <select id="search-price" name="price" class={control}>
+      <option value="">Cualquiera</option>
+      {PRICE_RANGES.map((o) => <option value={o.value}>{o.label}</option>)}
+    </select>
+  </div>
+
+  <div class={field}>
+    <label for="search-location" class={label}>Local</label>
+    <select id="search-location" name="location" class={control}>
+      <option value="">Todos</option>
+      {LOCATIONS.map((o) => <option value={o.value}>{o.label}</option>)}
+    </select>
+  </div>
+
+  <div class={field}>
+    <label for="search-capacity" class={label}>Capacidad (mín. personas)</label>
+    <input
+      id="search-capacity"
+      name="capacity"
+      type="number"
+      inputmode="numeric"
+      min="1"
+      step="1"
+      placeholder="Ej. 30"
+      aria-describedby="search-capacity-error"
+      class={control}
+    />
+    <p id="search-capacity-error" role="alert" class="hidden text-small text-red-700"></p>
+  </div>
+
+  <Button type="submit" class="m-1 md:px-8 md:py-4">Buscar</Button>
+</form>
+
+<script>
+  const form = document.getElementById('search-form') as HTMLFormElement | null;
+  const input = document.getElementById('search-capacity') as HTMLInputElement | null;
+  const error = document.getElementById('search-capacity-error');
+
+  function validate(): boolean {
+    if (!input || !error) return true;
+    const raw = input.value.trim();
+    // Vacío es válido: devuelve todos los espacios.
+    const n = Number(raw);
+    const valid = raw === '' || (Number.isInteger(n) && n >= 1);
+    error.textContent = valid ? '' : 'Ingresa un número entero de personas, mínimo 1.';
+    error.classList.toggle('hidden', valid);
+    input.toggleAttribute('aria-invalid', !valid);
+    return valid;
+  }
+
+  form?.addEventListener('submit', (e) => {
+    if (!validate()) {
+      e.preventDefault();
+      input?.focus();
+    }
+  });
+  input?.addEventListener('input', () => {
+    if (input.hasAttribute('aria-invalid')) validate();
+  });
+</script>
