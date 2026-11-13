@@ -2,10 +2,10 @@
 import Button from '@/components/ui/Button.astro';
 import SpaceCard from '@/components/ui/SpaceCard.astro';
 import { SEARCH_ACTION } from '@/data/search';
-import { FEATURED_SPACES } from '@/data/spaces';
+import { getFeaturedSpaces } from '@/data/spaces';
 
-// El orden de FEATURED_SPACES define el bento: grande, vertical, 2 pequeñas.
-const [large, vertical, smallTop, smallBottom] = FEATURED_SPACES;
+// `featuredOrder` define el bento: grande, vertical, 2 pequeñas.
+const [large, vertical, smallTop, smallBottom] = await getFeaturedSpaces();
 ---
 
 <section aria-labelledby="most-requested-title" class="mx-auto max-w-7xl px-4 py-16 md:px-8 md:py-24">
