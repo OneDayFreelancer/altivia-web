@@ -1,9 +1,9 @@
 /**
  * Opciones del buscador (ONE-10). Editar aquí tipos, rangos de precio y locales.
  * Rangos de precio de PRUEBA (S/ por hora), reemplazar con los reales del cliente.
- * Los tipos y locales vienen de `spaces.ts`.
+ * Los tipos y locales vienen de `catalog.ts`.
  */
-export { LOCATIONS, SPACE_TYPES } from '@/data/spaces';
+export { LOCATIONS, SPACE_TYPES } from '@/data/catalog';
 
 /** `value`: "min-max" o "min+" (sin tope). Se envía tal cual en `?price=`. */
 export const PRICE_RANGES: readonly { value: string; label: string }[] = [

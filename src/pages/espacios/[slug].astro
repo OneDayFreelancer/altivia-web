@@ -1,0 +1,115 @@
+---
+import { getImage } from 'astro:assets';
+import { render } from 'astro:content';
+import SpaceGallery from '@/components/islands/SpaceGallery';
+import Button from '@/components/ui/Button.astro';
+import { COMPLEMENTS, getSpaces, LOCATIONS, SPACE_TYPES } from '@/data/spaces';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { whatsappHref } from '@/lib/whatsapp';
+
+export async function getStaticPaths() {
+  const spaces = await getSpaces();
+  return spaces.map((space) => ({ params: { slug: space.id }, props: { space } }));
+}
+
+const { space } = Astro.props;
+const { name, type, location, maxCapacity, priceFrom, priceUnit, images, amenities, complements } =
+  space.data;
+
+const typeLabel = SPACE_TYPES.find((t) => t.value === type)?.label ?? type;
+const locationLabel = LOCATIONS.find((l) => l.value === location)?.label ?? location;
+const unit = priceUnit === 'hora' ? 'hora' : 'día';
+const complementLabels = complements.map((c) => COMPLEMENTS.find((x) => x.value === c)?.label ?? c);
+
+const { Content } = await render(space);
+
+// Imágenes optimizadas para la isla (Preact no puede usar astro:assets).
+const MAIN = { width: 1200, height: 800 };
+const gallery = await Promise.all(
+  images.map(async ({ src, alt }) => ({
+    src: (await getImage({ src, ...MAIN, format: 'webp' })).src,
+    thumb: (await getImage({ src, width: 224, height: 150, format: 'webp' })).src,
+    alt,
+  })),
+);
+
+const og = await getImage({ src: images[0].src, width: 1200, height: 630, format: 'jpg' });
+const ogImage = new URL(og.src, Astro.site).href;
+
+const description = `${typeLabel} en ${locationLabel} para hasta ${maxCapacity} personas. Desde S/ ${priceFrom} por ${unit}.`;
+const quoteHref = whatsappHref(
+  `Hola, quiero cotizar ${name} (${locationLabel}). ¿Tienen disponibilidad?`,
+);
+---
+
+<BaseLayout title={name} description={description} image={ogImage} solidHeader>
+  <div class="mx-auto max-w-7xl px-4 pb-28 pt-24 md:px-8 md:pt-28 lg:pb-16">
+    <a href="/#espacios" class="mb-6 inline-flex items-center gap-2 text-small font-semibold text-text-muted hover:text-text">
+      <span aria-hidden="true">←</span> Volver a espacios
+    </a>
+
+    <div class="lg:grid lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-12">
+      <div class="flex flex-col gap-8">
+        <SpaceGallery client:load images={gallery} width={MAIN.width} height={MAIN.height} />
+
+        <header class="flex flex-col gap-3">
+          <h1 class="text-3xl font-semibold text-balance md:text-h2">{name}</h1>
+          <ul class="flex flex-wrap gap-2 text-small font-medium">
+            <li class="rounded-pill border border-border px-3 py-1">{typeLabel}</li>
+            <li class="rounded-pill border border-border px-3 py-1">{locationLabel}</li>
+            <li class="rounded-pill border border-border px-3 py-1">Hasta {maxCapacity} personas</li>
+          </ul>
+        </header>
+
+        <section aria-labelledby="description-title" class="flex flex-col gap-3">
+          <h2 id="description-title" class="text-h3 font-semibold">Descripción</h2>
+          <div class="flex flex-col gap-4 text-body text-text-muted">
+            <Content />
+          </div>
+        </section>
+
+        {amenities.length > 0 && (
+          <section aria-labelledby="amenities-title" class="flex flex-col gap-3">
+            <h2 id="amenities-title" class="text-h3 font-semibold">Características</h2>
+            <ul class="grid gap-2 sm:grid-cols-2">
+              {amenities.map((a) => (
+                <li class="flex items-center gap-2 text-body">
+                  <span aria-hidden="true" class="size-1.5 shrink-0 rounded-full bg-dark"></span>
+                  {a}
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        {complementLabels.length > 0 && (
+          <section aria-labelledby="complements-title" class="flex flex-col gap-3">
+            <h2 id="complements-title" class="text-h3 font-semibold">Complementos disponibles</h2>
+            <ul class="flex flex-wrap gap-2 text-small font-medium">
+              {complementLabels.map((c) => (
+                <li class="rounded-pill bg-surface-alt px-3 py-1">{c}</li>
+              ))}
+            </ul>
+          </section>
+        )}
+      </div>
+
+      <aside class="hidden lg:block">
+        <div class="sticky top-24 flex flex-col gap-4 rounded-card border border-border bg-surface p-6 shadow-soft">
+          <p class="text-small text-text-muted">Precio base</p>
+          <p class="text-h2 font-semibold">S/ {priceFrom} <span class="text-body font-medium text-text-muted">/ {unit}</span></p>
+          <p class="text-small text-text-muted">Capacidad máxima: {maxCapacity} personas</p>
+          <Button href={quoteHref} class="w-full">Cotizar por WhatsApp</Button>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <div class="fixed inset-x-0 bottom-0 z-40 flex items-center justify-between gap-4 border-t border-border bg-surface px-4 py-3 lg:hidden">
+    <p class="leading-tight">
+      <span class="block text-small text-text-muted">Desde</span>
+      <span class="font-semibold">S/ {priceFrom} / {unit}</span>
+    </p>
+    <Button href={quoteHref}>Cotizar</Button>
+  </div>
+</BaseLayout>

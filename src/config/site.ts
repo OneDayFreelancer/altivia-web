@@ -3,7 +3,8 @@ export const SITE = {
   name: 'Altivia',
   description: 'Altivia: alquiler de propiedades y espacios.',
   locale: 'es',
-  whatsappNumber: import.meta.env.PUBLIC_WHATSAPP_NUMBER ?? '',
+  /** Con código de país, sin `+`. `PUBLIC_WHATSAPP_NUMBER` lo sobrescribe. */
+  whatsappNumber: import.meta.env.PUBLIC_WHATSAPP_NUMBER || '51954206384',
 } as const;
 
 export const NAV_ITEMS = [

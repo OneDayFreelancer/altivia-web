@@ -1,7 +1,6 @@
 ---
 import { Picture } from 'astro:assets';
-import { spaceHref } from '@/data/spaces';
-import type { Space } from '@/types/space';
+import { type Space, spaceHref } from '@/data/spaces';
 
 interface Props {
   space: Space;
@@ -13,7 +12,9 @@ interface Props {
 }
 
 const { space, sizes, showCapacity = false, class: className } = Astro.props;
-const unit = space.priceUnit === 'hora' ? 'hora' : 'día';
+const { name, images, priceFrom, priceUnit, maxCapacity } = space.data;
+const cover = images[0];
+const unit = priceUnit === 'hora' ? 'hora' : 'día';
 ---
 
 <a
@@ -22,8 +23,8 @@ const unit = space.priceUnit === 'hora' ? 'hora' : 'día';
 >
   <div class="absolute inset-0 overflow-hidden bg-surface-alt">
     <Picture
-      src={space.image}
-      alt={space.imageAlt}
+      src={cover.src}
+      alt={cover.alt}
       widths={[480, 768, 1200]}
       sizes={sizes}
       formats={['avif', 'webp']}
@@ -35,10 +36,10 @@ const unit = space.priceUnit === 'hora' ? 'hora' : 'día';
   </div>
 
   <div class="absolute inset-x-0 bottom-0 flex flex-col gap-1 p-5 text-white">
-    <h3 class="text-h4 font-semibold">{space.name}</h3>
+    <h3 class="text-h4 font-semibold">{name}</h3>
     <p class="text-small">
-      Desde <span class="font-semibold">S/ {space.priceFrom}</span> / {unit}
-      {showCapacity && <span> · Hasta {space.maxCapacity} personas</span>}
+      Desde <span class="font-semibold">S/ {priceFrom}</span> / {unit}
+      {showCapacity && <span> · Hasta {maxCapacity} personas</span>}
     </p>
   </div>
 </a>
