@@ -3,7 +3,10 @@ import type { ImageMetadata } from 'astro';
 export type SpaceType = 'parrilla' | 'parrilla-jardin' | 'sum';
 
 export interface Space {
+  /** UUID v4 estable (identificador interno). */
   id: string;
+  /** Slug único para la URL, ej. "parrilla-magdalena". */
+  slug: string;
   type: SpaceType;
   /** Nombre visible, ej. "Parrilla Magdalena". */
   name: string;
