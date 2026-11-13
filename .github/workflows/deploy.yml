@@ -65,7 +65,7 @@ jobs:
         env:
           GHCR_USER: ${{ github.actor }}
           GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PROJECT_DIR: /opt/projects/${{ github.event.repository.name }}
+          PROJECT_DIR: /opt/freelancer-configuration/projects/${{ github.event.repository.name }}
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
