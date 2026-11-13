@@ -17,24 +17,24 @@ const [large, vertical, smallTop, smallBottom] = FEATURED_SPACES;
     </Button>
   </div>
 
-  <ul class="grid grid-cols-1 gap-4 md:h-[26rem] md:grid-cols-4 md:grid-rows-2 md:gap-6">
+  <ul class="grid grid-cols-1 gap-4 md:h-[21rem] md:grid-cols-4 md:grid-rows-2 md:gap-6">
     {large && (
-      <li class="h-64 md:col-span-2 md:row-span-2 md:h-auto">
+      <li class="h-56 md:col-span-2 md:row-span-2 md:h-auto">
         <SpaceCard space={large} sizes="(min-width: 768px) 50vw, 100vw" showCapacity />
       </li>
     )}
     {vertical && (
-      <li class="h-64 md:col-span-1 md:row-span-2 md:h-auto">
+      <li class="h-56 md:col-span-1 md:row-span-2 md:h-auto">
         <SpaceCard space={vertical} sizes="(min-width: 768px) 25vw, 100vw" />
       </li>
     )}
     {smallTop && (
-      <li class="h-48 md:col-span-1 md:h-auto">
+      <li class="h-40 md:col-span-1 md:h-auto">
         <SpaceCard space={smallTop} sizes="(min-width: 768px) 25vw, 100vw" />
       </li>
     )}
     {smallBottom && (
-      <li class="h-48 md:col-span-1 md:h-auto">
+      <li class="h-40 md:col-span-1 md:h-auto">
         <SpaceCard space={smallBottom} sizes="(min-width: 768px) 25vw, 100vw" />
       </li>
     )}
