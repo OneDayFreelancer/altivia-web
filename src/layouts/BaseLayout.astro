@@ -1,4 +1,5 @@
 ---
+import Header from '@/components/sections/Header.astro';
 import { SITE } from '@/config/site';
 import '@/styles/global.css';
 
@@ -23,6 +24,9 @@ const pageTitle = title ? `${title} | ${SITE.name}` : SITE.name;
     <title>{pageTitle}</title>
   </head>
   <body class="bg-white font-sans text-neutral-900 antialiased">
-    <slot />
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
   </body>
 </html>

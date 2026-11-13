@@ -1,0 +1,159 @@
+---
+import Button from '@/components/ui/Button.astro';
+import { AUTH_LINKS, LOCALES, NAV_ITEMS, SITE } from '@/config/site';
+
+const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
+const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
+const currentLocale = SITE.locale;
+
+const linkBase = 'rounded-pill px-4 py-2 text-small font-semibold transition-colors';
+const linkClass = (href: string) =>
+  `${linkBase} ${isActive(href) ? 'bg-primary text-primary-contrast' : 'text-white hover:bg-white/15'}`;
+---
+
+<header
+  id="site-header"
+  class="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-black/30 text-white backdrop-blur-md transition-colors data-[scrolled=true]:bg-black/60"
+>
+  <a
+    href="#main"
+    class="sr-only rounded-pill bg-dark px-4 py-2 text-small font-semibold text-dark-contrast focus:not-sr-only focus:absolute focus:left-4 focus:top-2"
+  >
+    Saltar al contenido
+  </a>
+
+  <div class="mx-auto flex h-16 max-w-7xl items-center justify-between gap-6 px-4 md:grid md:grid-cols-[1fr_auto_1fr] md:px-8">
+    <a href="/" class="inline-flex items-center gap-2 text-h4 font-bold tracking-tight text-white" aria-label={`${SITE.name} - Inicio`}>
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="5.5" /><circle cx="12" cy="12" r="1.5" fill="currentColor" /></svg>
+      {SITE.name}
+    </a>
+
+    <nav aria-label="Principal" class="hidden items-center gap-1 md:flex">
+      {
+        NAV_ITEMS.map((item) => (
+          <a
+            href={item.href}
+            class={linkClass(item.href)}
+            aria-current={isActive(item.href) ? 'page' : undefined}
+          >
+            {item.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    <div class="hidden items-center justify-end gap-3 md:flex">
+      <div role="group" aria-label="Idioma" class="flex items-center gap-1 text-small font-semibold">
+        {
+          LOCALES.map((l) =>
+            l.available ? (
+              <a
+                href="/"
+                lang={l.code}
+                aria-current={l.code === currentLocale ? 'true' : undefined}
+                class={`rounded-pill px-2 py-1 ${l.code === currentLocale ? 'bg-white/15 text-white' : 'text-white/70 hover:text-white'}`}
+              >
+                {l.label}
+              </a>
+            ) : (
+              <span lang={l.code} aria-disabled="true" title="Próximamente" class="px-2 py-1 text-white/60">
+                {l.label}
+              </span>
+            ),
+          )
+        }
+      </div>
+      <a href={AUTH_LINKS.login.href} class={`${linkBase} text-white hover:bg-white/15`}>
+        {AUTH_LINKS.login.label}
+      </a>
+      <Button variant="dark" href={AUTH_LINKS.signUp.href}>{AUTH_LINKS.signUp.label}</Button>
+    </div>
+
+    <button
+      id="menu-toggle"
+      type="button"
+      class="inline-flex size-10 items-center justify-center rounded-pill text-white hover:bg-white/15 md:hidden"
+      aria-expanded="false"
+      aria-controls="mobile-menu"
+      aria-label="Abrir menú"
+    >
+      <svg id="icon-open" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" /></svg>
+      <svg id="icon-close" class="hidden" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+    </button>
+  </div>
+
+  <div id="mobile-menu" hidden class="border-t border-white/10 bg-black/80 backdrop-blur-md md:hidden">
+    <nav aria-label="Principal móvil" class="mx-auto flex max-w-7xl flex-col gap-1 px-4 py-4">
+      {
+        NAV_ITEMS.map((item) => (
+          <a
+            href={item.href}
+            class={`${linkClass(item.href)} py-3`}
+            aria-current={isActive(item.href) ? 'page' : undefined}
+          >
+            {item.label}
+          </a>
+        ))
+      }
+      <div class="mt-3 flex items-center gap-3 border-t border-white/10 pt-4">
+        <a href={AUTH_LINKS.login.href} class={`${linkBase} text-white hover:bg-white/15`}>
+          {AUTH_LINKS.login.label}
+        </a>
+        <Button variant="dark" href={AUTH_LINKS.signUp.href} class="border border-white/30">{AUTH_LINKS.signUp.label}</Button>
+        <div role="group" aria-label="Idioma" class="ml-auto flex items-center gap-1 text-small font-semibold">
+          {
+            LOCALES.map((l) =>
+              l.available ? (
+                <a href="/" lang={l.code} aria-current={l.code === currentLocale ? 'true' : undefined} class={`rounded-pill px-2 py-1 ${l.code === currentLocale ? 'bg-white/15 text-white' : 'text-white/70'}`}>
+                  {l.label}
+                </a>
+              ) : (
+                <span lang={l.code} aria-disabled="true" title="Próximamente" class="px-2 py-1 text-white/60">
+                  {l.label}
+                </span>
+              ),
+            )
+          }
+        </div>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const header = document.getElementById('site-header');
+  const toggle = document.getElementById('menu-toggle');
+  const menu = document.getElementById('mobile-menu');
+  const iconOpen = document.getElementById('icon-open');
+  const iconClose = document.getElementById('icon-close');
+
+  const setOpen = (open: boolean, restoreFocus = false) => {
+    if (!toggle || !menu) return;
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
+    menu.hidden = !open;
+    iconOpen?.classList.toggle('hidden', open);
+    iconClose?.classList.toggle('hidden', !open);
+    if (!open && restoreFocus) toggle.focus();
+  };
+
+  toggle?.addEventListener('click', () => setOpen(toggle.getAttribute('aria-expanded') !== 'true'));
+  menu?.addEventListener('click', (e) => {
+    if ((e.target as HTMLElement).closest('a')) setOpen(false);
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && toggle?.getAttribute('aria-expanded') === 'true') setOpen(false, true);
+  });
+  document.addEventListener('click', (e) => {
+    if (toggle?.getAttribute('aria-expanded') === 'true' && !header?.contains(e.target as Node)) {
+      setOpen(false);
+    }
+  });
+  window.matchMedia('(min-width: 768px)').addEventListener('change', (e) => {
+    if (e.matches) setOpen(false);
+  });
+
+  const onScroll = () => header?.setAttribute('data-scrolled', String(window.scrollY > 8));
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+</script>
