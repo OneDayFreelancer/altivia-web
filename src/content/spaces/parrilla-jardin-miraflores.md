@@ -8,16 +8,24 @@ priceUnit: hora
 images:
   - src: ../../assets/spaces/jardin-1.jpg
     alt: Jardín con sillas y decoración floral para eventos en Miraflores
+schedule:
+  default:
+    - "10:00-14:00"
+    - "14:00-18:00"
+    - "18:00-24:00"
 amenities:
   - Parrilla a carbón
   - Jardín amplio
   - Mesas y sillas de jardín
   - Baño privado
 complements:
-  - parlante
   - sillas
   - mesa
+  - equipo-de-sonido
   - proyector
+  - dj
+  - barman
+  - payasos
 ---
 
 Texto de prueba. Reemplazar con la descripción real de la parrilla con jardín de Miraflores: ambiente, distribución y reglas de uso.

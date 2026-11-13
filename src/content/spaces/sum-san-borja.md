@@ -12,16 +12,24 @@ images:
     alt: Salón de usos múltiples con mesas redondas
   - src: ../../assets/spaces/sum-2.jpg
     alt: Salón de eventos decorado con mesas puestas
+schedule:
+  default:
+    - "10:00-14:00"
+    - "14:00-18:00"
+    - "18:00-24:00"
 amenities:
   - Salón techado
   - Aire acondicionado
   - Cocina equipada
   - Baño privado
 complements:
-  - parlante
   - sillas
   - mesa
   - proyector
+  - pantalla
+  - laptop
+  - equipo-de-sonido
+  - dj
 ---
 
 Texto de prueba. Reemplazar con la descripción real de el salón de usos múltiples de San Borja: ambiente, distribución y reglas de uso.
