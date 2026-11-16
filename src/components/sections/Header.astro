@@ -1,5 +1,5 @@
 ---
-import Button from '@/components/ui/Button.astro';
+import AuthNav from '@/components/islands/AuthNav';
 import { AUTH_LINKS, LOCALES, NAV_ITEMS, SITE } from '@/config/site';
 
 interface Props {
@@ -75,10 +75,7 @@ const linkClass = (href: string) =>
           )
         }
       </div>
-      <a href={AUTH_LINKS.login.href} class={`${linkBase} text-white hover:bg-white/15`}>
-        {AUTH_LINKS.login.label}
-      </a>
-      <Button variant="dark" href={AUTH_LINKS.signUp.href}>{AUTH_LINKS.signUp.label}</Button>
+      <AuthNav client:load loginLabel={AUTH_LINKS.login.label} loginHref={AUTH_LINKS.login.href} signUpLabel={AUTH_LINKS.signUp.label} signUpHref={AUTH_LINKS.signUp.href} />
     </div>
 
     <button
@@ -108,10 +105,7 @@ const linkClass = (href: string) =>
         ))
       }
       <div class="mt-3 flex items-center gap-3 border-t border-white/10 pt-4">
-        <a href={AUTH_LINKS.login.href} class={`${linkBase} text-white hover:bg-white/15`}>
-          {AUTH_LINKS.login.label}
-        </a>
-        <Button variant="dark" href={AUTH_LINKS.signUp.href} class="border border-white/30">{AUTH_LINKS.signUp.label}</Button>
+        <AuthNav client:load mobile loginLabel={AUTH_LINKS.login.label} loginHref={AUTH_LINKS.login.href} signUpLabel={AUTH_LINKS.signUp.label} signUpHref={AUTH_LINKS.signUp.href} />
         <div role="group" aria-label="Idioma" class="ml-auto flex items-center gap-1 text-small font-semibold">
           {
             LOCALES.map((l) =>

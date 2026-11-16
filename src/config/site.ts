@@ -15,7 +15,7 @@ export const NAV_ITEMS = [
 /** Destinos de cuenta. Placeholder hasta implementar auth. */
 export const AUTH_LINKS = {
   login: { label: 'Log in', href: '#' },
-  signUp: { label: 'Sign Up', href: '#' },
+  signUp: { label: 'Sign Up', href: '/registro' },
 } as const;
 
 /** Idiomas del sitio. `available: false` = preparado, aún sin páginas traducidas. */
