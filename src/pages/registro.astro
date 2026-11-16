@@ -1,0 +1,14 @@
+---
+import SignUpForm from '@/components/islands/SignUpForm';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Crear cuenta" solidHeader>
+  <section class="mx-auto flex max-w-md flex-col gap-6 px-4 pb-24 pt-36 md:px-8">
+    <div class="flex flex-col gap-2">
+      <h1 class="text-3xl font-semibold text-balance md:text-h2">Crea tu cuenta</h1>
+      <p class="text-body text-text-muted">Para reservar espacios y ver tus reservas.</p>
+    </div>
+    <SignUpForm client:load />
+  </section>
+</BaseLayout>
