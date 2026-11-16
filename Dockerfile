@@ -5,6 +5,13 @@ RUN corepack enable
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN pnpm install --frozen-lockfile
 COPY . .
+# Las variables PUBLIC_* se incrustan en el build (.env está en .dockerignore).
+ARG PUBLIC_SUPABASE_URL
+ARG PUBLIC_SUPABASE_ANON_KEY
+ARG PUBLIC_WHATSAPP_NUMBER
+ENV PUBLIC_SUPABASE_URL=$PUBLIC_SUPABASE_URL \
+    PUBLIC_SUPABASE_ANON_KEY=$PUBLIC_SUPABASE_ANON_KEY \
+    PUBLIC_WHATSAPP_NUMBER=$PUBLIC_WHATSAPP_NUMBER
 RUN pnpm build
 
 FROM nginx:1.27-alpine AS runtime
