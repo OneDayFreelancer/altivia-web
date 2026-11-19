@@ -4,6 +4,12 @@ dist/
 # generated types
 .astro/
 
+.claude/
+
+.mcp.json
+skills-lock.json
+AGENTS.md
+
 # dependencies
 node_modules/
 
