@@ -15,7 +15,7 @@ jobs:
   verify:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: Infisical/secrets-action@v1.0.18
         with:
           client-id: ${{ secrets.INFISICAL_CLIENT_ID }}
@@ -23,8 +23,8 @@ jobs:
           project-slug: ${{ vars.INFISICAL_PROJECT_SLUG }}
           env-slug: prod
           domain: ${{ vars.INFISICAL_DOMAIN }}
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: pnpm
@@ -93,9 +93,9 @@ jobs:
           script: |
             echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
             cd "$PROJECT_DIR"
-            
+
             docker compose pull
             docker compose up -d
-            
+
             docker logout ghcr.io
             docker image prune -f
