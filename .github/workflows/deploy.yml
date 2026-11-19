@@ -93,9 +93,9 @@ jobs:
           script: |
             echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
             cd "$PROJECT_DIR"
-            
+
             docker compose pull
             docker compose up -d
-            
+
             docker logout ghcr.io
             docker image prune -f
