@@ -5,6 +5,8 @@ dist/
 .astro/
 
 .claude/
+.agents/
+.vscode/
 
 .mcp.json
 skills-lock.json
