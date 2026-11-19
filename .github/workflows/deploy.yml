@@ -45,7 +45,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - id: meta
-        run: echo "image=${REGISTRY}/${GITHUB_REPOSITORY,,}" >>
+        run: echo "image=${REGISTRY}/${GITHUB_REPOSITORY,,}" >> "$GITHUB_OUTPUT"
       - uses: Infisical/secrets-action@v1.0.18
         with:
           client-id: ${{ secrets.INFISICAL_CLIENT_ID }}
