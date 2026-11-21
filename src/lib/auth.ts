@@ -22,8 +22,33 @@ export const validatePassword = (v: string): string | undefined =>
 /** Deja solo dígitos (el celular se escribe a veces con espacios). */
 export const digitsOnly = (v: string): string => v.replace(/\D/g, '');
 
+/** Solo rutas internas: evita open redirect vía `?next=`. */
+export function safeNext(raw: string | null | undefined): string {
+  if (!raw?.startsWith('/') || raw.startsWith('//') || raw.startsWith('/\\')) return '/';
+  return raw;
+}
+
+/** `next` de la URL actual, validado. */
+export const currentNext = (): string =>
+  safeNext(new URLSearchParams(window.location.search).get('next'));
+
 /** URL absoluta de retorno de verificación de correo y OAuth. */
-export const confirmedUrl = (): string => `${window.location.origin}/auth/confirmado`;
+export const confirmedUrl = (next?: string): string => {
+  const base = `${window.location.origin}/auth/confirmado`;
+  return next && next !== '/' ? `${base}?next=${encodeURIComponent(next)}` : base;
+};
+
+/** URL absoluta de retorno del enlace de recuperación de contraseña. */
+export const resetUrl = (): string => `${window.location.origin}/restablecer`;
+
+/** Ruta protegida: sin sesión redirige a `/login?next=…`. Devuelve la sesión, o `null` si redirigió. */
+export async function requireSession() {
+  const { data } = await supabase.auth.getSession();
+  if (data.session) return data.session;
+  const here = window.location.pathname + window.location.search;
+  window.location.replace(`/login?next=${encodeURIComponent(here)}`);
+  return null;
+}
 
 /** Traduce errores de Supabase Auth a mensajes claros. */
 export function authErrorMessage(error: { code?: string; message: string }): string {
@@ -31,6 +56,12 @@ export function authErrorMessage(error: { code?: string; message: string }): str
     case 'user_already_exists':
     case 'email_exists':
       return 'Este correo ya está registrado. Inicia sesión.';
+    case 'invalid_credentials':
+      return 'Correo o contraseña incorrectos.';
+    case 'email_not_confirmed':
+      return 'Verifica tu correo antes de iniciar sesión.';
+    case 'same_password':
+      return 'La nueva contraseña debe ser distinta a la anterior.';
     case 'weak_password':
       return 'La contraseña es muy débil. Usa una más larga o variada.';
     case 'over_email_send_rate_limit':
@@ -44,12 +75,13 @@ export function authErrorMessage(error: { code?: string; message: string }): str
 }
 
 /** Destino tras autenticarse: `/completar-perfil` si falta el celular, si no el inicio. */
-export async function destinationAfterAuth(userId: string): Promise<string> {
+export async function destinationAfterAuth(userId: string, next = '/'): Promise<string> {
   const { data, error } = await supabase
     .from('profiles')
     .select('phone')
     .eq('id', userId)
     .maybeSingle();
   if (error) throw error;
-  return data?.phone ? '/' : '/completar-perfil';
+  if (data?.phone) return next;
+  return next === '/' ? '/completar-perfil' : `/completar-perfil?next=${encodeURIComponent(next)}`;
 }

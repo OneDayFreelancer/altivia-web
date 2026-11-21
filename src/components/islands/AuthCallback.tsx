@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'preact/hooks';
-import { destinationAfterAuth } from '@/lib/auth';
+import { currentNext, destinationAfterAuth } from '@/lib/auth';
 import { supabase } from '@/lib/supabase';
 
 /** Retorno del enlace de verificación y de Google: confirma la sesión y redirige. */
@@ -9,7 +9,9 @@ export default function AuthCallback() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.hash.slice(1));
     if (params.get('error')) {
-      setError('El enlace no es válido o venció. Regístrate de nuevo para recibir otro.');
+      setError(
+        'El enlace no es válido o venció. Solicita otro enlace desde el registro o el inicio de sesión.',
+      );
       return;
     }
     // getSession espera a que el cliente procese el token de la URL.
@@ -20,7 +22,7 @@ export default function AuthCallback() {
           setError('No pudimos confirmar tu cuenta. Inténtalo de nuevo.');
           return;
         }
-        window.location.replace(await destinationAfterAuth(data.session.user.id));
+        window.location.replace(await destinationAfterAuth(data.session.user.id, currentNext()));
       })
       .catch(() => setError('No pudimos confirmar tu cuenta. Inténtalo de nuevo.'));
   }, []);
