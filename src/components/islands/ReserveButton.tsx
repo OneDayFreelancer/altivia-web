@@ -6,8 +6,8 @@ import {
 } from '@/lib/reservationStore';
 
 interface Props {
-  /** Sin campos completos, lleva al formulario en vez de quedar deshabilitado (barra móvil). */
-  scrollWhenIncomplete?: boolean;
+  /** Oculta el texto de campos faltantes (barra móvil, poco espacio). */
+  hideHint?: boolean;
   class?: string;
 }
 
@@ -15,7 +15,7 @@ const base =
   'inline-flex items-center justify-center rounded-pill bg-primary px-5 py-2.5 text-small font-semibold text-primary-contrast transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-primary';
 
 /** "Reservar" fuera del formulario: habilitado solo con los campos completos; pide login si falta. */
-export default function ReserveButton({ scrollWhenIncomplete, class: cls = '' }: Props) {
+export default function ReserveButton({ hideHint, class: cls = '' }: Props) {
   const [s, setS] = useState(getReservationState);
   useEffect(() => {
     setS(getReservationState());
@@ -30,14 +30,6 @@ export default function ReserveButton({ scrollWhenIncomplete, class: cls = '' }:
     );
   }
 
-  if (scrollWhenIncomplete && !s.canReserve) {
-    return (
-      <a href="#reserva" class={`${base} ${cls}`}>
-        Reservar
-      </a>
-    );
-  }
-
   return (
     <div class="flex flex-col gap-2">
       <button
@@ -48,7 +40,7 @@ export default function ReserveButton({ scrollWhenIncomplete, class: cls = '' }:
       >
         {s.submitting ? 'Reservando…' : 'Reservar'}
       </button>
-      {!s.canReserve && s.missing.length > 0 && (
+      {!hideHint && !s.canReserve && s.missing.length > 0 && (
         <p class="text-small text-text-muted">
           Elige {s.missing.join(', ')} en{' '}
           <a href="#reserva" class="font-semibold underline">

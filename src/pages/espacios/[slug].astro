@@ -138,6 +138,6 @@ const quoteHref = whatsappHref(
       <span class="block text-small text-text-muted">Desde</span>
       <span class="font-semibold">S/ {priceFrom} / {unit}</span>
     </p>
-    {hourly ? <ReserveButton client:load scrollWhenIncomplete /> : <Button href={quoteHref}>Cotizar</Button>}
+    {hourly ? <ReserveButton client:load hideHint /> : <Button href={quoteHref}>Cotizar</Button>}
   </div>
 </BaseLayout>
