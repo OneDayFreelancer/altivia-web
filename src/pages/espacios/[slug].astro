@@ -2,6 +2,7 @@
 import { getImage } from 'astro:assets';
 import { render } from 'astro:content';
 import ReservationBuilder, { type ComplementOption } from '@/components/islands/ReservationBuilder';
+import ReserveButton from '@/components/islands/ReserveButton';
 import SpaceGallery from '@/components/islands/SpaceGallery';
 import Button from '@/components/ui/Button.astro';
 import { getSpaceComplements, getSpaces, LOCATIONS, SPACE_TYPES } from '@/data/spaces';
@@ -61,7 +62,6 @@ const og = await getImage({ src: images[0].src, width: 1200, height: 630, format
 const ogImage = new URL(og.src, Astro.site).href;
 
 const description = `${typeLabel} en ${locationLabel} para hasta ${maxCapacity} personas. Desde S/ ${priceFrom} por ${unit}.`;
-const spaceUrl = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : Astro.url.href;
 const quoteHref = whatsappHref(
   `Hola, quiero cotizar ${name} (${locationLabel}). ¿Tienen disponibilidad?`,
 );
@@ -110,8 +110,8 @@ const quoteHref = whatsappHref(
         {hourly && (
           <ReservationBuilder
             client:load
+            spaceSlug={space.id}
             spaceName={name}
-            spaceUrl={spaceUrl}
             locationLabel={locationLabel}
             pricePerHour={priceFrom}
             maxCapacity={maxCapacity}
@@ -126,7 +126,7 @@ const quoteHref = whatsappHref(
           <p class="text-small text-text-muted">Precio base</p>
           <p class="text-h2 font-semibold">S/ {priceFrom} <span class="text-body font-medium text-text-muted">/ {unit}</span></p>
           <p class="text-small text-text-muted">Capacidad máxima: {maxCapacity} personas</p>
-          {hourly && <Button href="#reserva" class="w-full">Armar mi reserva</Button>}
+          {hourly && <ReserveButton client:load class="w-full" />}
           <Button href={quoteHref} variant="outline" class="w-full">Consultar por WhatsApp</Button>
         </div>
       </aside>
@@ -138,6 +138,6 @@ const quoteHref = whatsappHref(
       <span class="block text-small text-text-muted">Desde</span>
       <span class="font-semibold">S/ {priceFrom} / {unit}</span>
     </p>
-    <Button href={hourly ? '#reserva' : quoteHref}>{hourly ? 'Reservar' : 'Cotizar'}</Button>
+    {hourly ? <ReserveButton client:load hideHint /> : <Button href={quoteHref}>Cotizar</Button>}
   </div>
 </BaseLayout>

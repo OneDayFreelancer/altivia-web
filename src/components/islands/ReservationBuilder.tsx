@@ -8,7 +8,15 @@ import {
   type TimeSlot,
   toTime,
 } from '@/lib/quote';
-import { buildQuoteMessage, whatsappHref } from '@/lib/whatsapp';
+import { setReservationState, setSubmitHandler } from '@/lib/reservationStore';
+import {
+  createReservation,
+  fetchTakenSlots,
+  overlaps,
+  reservationErrorMessage,
+  type TakenSlot,
+} from '@/lib/reservations';
+import { supabase } from '@/lib/supabase';
 
 export interface ComplementOption {
   slug: string;
@@ -25,9 +33,8 @@ export interface ComplementOption {
 }
 
 interface Props {
+  spaceSlug: string;
   spaceName: string;
-  /** URL absoluta de la página del espacio, para el mensaje de WhatsApp. */
-  spaceUrl: string;
   locationLabel: string;
   pricePerHour: number;
   maxCapacity: number;
@@ -48,7 +55,7 @@ const PRICING_LABEL: Record<Pricing, (c: ComplementOption) => string> = {
 };
 
 const field =
-  'w-full rounded-md border border-border bg-surface px-3 py-2 text-body text-text focus-visible:outline-2 focus-visible:outline-offset-1';
+  'w-full rounded-md border border-border aria-[invalid=true]:border-red-700 bg-surface px-3 py-2 text-body text-text focus-visible:outline-2 focus-visible:outline-offset-1';
 const label = 'flex flex-col gap-1 text-small font-semibold';
 const stepper =
   'inline-flex size-9 items-center justify-center rounded-pill border border-border bg-surface text-body font-semibold hover:bg-surface-alt disabled:cursor-not-allowed disabled:opacity-40';
@@ -109,8 +116,8 @@ function Stepper({
 }
 
 export default function ReservationBuilder({
+  spaceSlug,
   spaceName,
-  spaceUrl,
   locationLabel,
   pricePerHour,
   maxCapacity,
@@ -125,7 +132,73 @@ export default function ReservationBuilder({
     {},
   );
 
+  // `undefined` = sesión sin resolver.
+  const [userId, setUserId] = useState<string | null | undefined>(undefined);
+  const [taken, setTaken] = useState<TakenSlot[]>([]);
+  const [availabilityError, setAvailabilityError] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
+
   useEffect(() => setToday(localToday()), []);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => setUserId(data.session?.user.id ?? null));
+    const { data } = supabase.auth.onAuthStateChange((_e, session) =>
+      setUserId(session?.user.id ?? null),
+    );
+    return () => data.subscription.unsubscribe();
+  }, []);
+
+  // Persiste el formulario en sessionStorage: sobrevive al login y a recargas.
+  const draftKey = `reserva:${spaceSlug}`;
+  const [restored, setRestored] = useState(false);
+
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem(draftKey);
+      if (raw) {
+        const d = JSON.parse(raw) as {
+          date?: string;
+          slotIndex?: string;
+          guests?: string;
+          selection?: Record<string, { quantity: number; hours: number }>;
+        };
+        // Una fecha ya pasada no se restaura.
+        if (d.date && d.date >= localToday()) {
+          setDate(d.date);
+          setSlotIndex(d.slotIndex ?? '');
+        }
+        setGuests(d.guests ?? '');
+        setSelection(d.selection ?? {});
+      }
+    } catch {
+      // Borrador corrupto o storage bloqueado: se ignora.
+    }
+    setRestored(true);
+  }, [draftKey]);
+
+  useEffect(() => {
+    if (!restored) return;
+    try {
+      sessionStorage.setItem(draftKey, JSON.stringify({ date, slotIndex, guests, selection }));
+    } catch {
+      // Storage bloqueado: sin persistencia.
+    }
+  }, [restored, draftKey, date, slotIndex, guests, selection]);
+
+  // Turnos ya reservados por otros en la fecha elegida.
+  useEffect(() => {
+    setTaken([]);
+    setAvailabilityError(false);
+    if (!date) return;
+    let stale = false;
+    fetchTakenSlots(spaceSlug, date)
+      .then((t) => !stale && setTaken(t))
+      .catch(() => !stale && setAvailabilityError(true));
+    return () => {
+      stale = true;
+    };
+  }, [spaceSlug, date]);
 
   const guestsNumber = Number.parseInt(guests, 10) || 0;
 
@@ -136,6 +209,8 @@ export default function ReservationBuilder({
   const startTime = slot ? toTime(slot.start) : '';
   const endTime = slot ? toTime(slot.end) : '';
   const hours = slot ? (slot.end - slot.start) / 60 : 0;
+  const isTaken = (sl: TimeSlot) => taken.some((t) => overlaps(t, sl));
+  const slotTaken = slot ? isTaken(slot) : false;
 
   const onDate = (value: string) => {
     setDate(value);
@@ -186,21 +261,68 @@ export default function ReservationBuilder({
     !timeRange && 'el horario',
     guestsNumber < 1 && 'las personas',
   ].filter(Boolean) as string[];
-  const canQuote = quote.complete && timeRange !== null;
-  const quoteHref = canQuote
-    ? whatsappHref(
-        buildQuoteMessage({
+  const canReserve = quote.complete && timeRange !== null && slot !== undefined && !slotTaken;
+  const loginHref = `/login?next=${encodeURIComponent(`/espacios/${spaceSlug}#reserva`)}`;
+
+  const reserve = async () => {
+    if (!userId || submitting) return;
+    // Validación previa: nada se envía con campos vacíos o turno ocupado.
+    if (!canReserve || !slot) {
+      setSubmitError(
+        slotTaken
+          ? 'Ese turno ya fue reservado. Elige otro.'
+          : `Completa ${missing.join(', ') || 'los datos de la reserva'} para reservar.`,
+      );
+      document.getElementById('reserva')?.scrollIntoView({ behavior: 'smooth' });
+      return;
+    }
+    setSubmitting(true);
+    setSubmitError('');
+    try {
+      await createReservation(
+        {
+          spaceSlug,
           spaceName,
-          locationLabel,
-          spaceUrl,
-          dateLabel: formatDate(date),
-          timeRange,
-          hours,
+          date,
+          start: slot.start,
+          end: slot.end,
           guests: guestsNumber,
-          quote,
-        }),
-      )
-    : undefined;
+          base: quote.base,
+          total: quote.total,
+          lines: quote.lines,
+        },
+        userId,
+      );
+      try {
+        sessionStorage.removeItem(draftKey);
+      } catch {
+        // sin storage
+      }
+      window.location.assign('/mis-reservas?nueva=1');
+    } catch (e) {
+      setSubmitError(reservationErrorMessage(e as { code?: string; message: string }));
+      // Si chocó con otra reserva, refresca los turnos ocupados.
+      fetchTakenSlots(spaceSlug, date)
+        .then(setTaken)
+        .catch(() => {});
+      setSlotIndex('');
+      setSubmitting(false);
+    }
+  };
+
+  // Al completar los datos, se limpia el aviso de validación.
+  useEffect(() => {
+    if (canReserve) setSubmitError('');
+  }, [canReserve]);
+
+  // Comparte el estado con los botones "Reservar" de la página.
+  useEffect(() => {
+    setReservationState({ userId, canReserve, submitting, missing, loginHref });
+  }, [userId, canReserve, submitting, missing.join('|'), loginHref]);
+
+  // Siempre el `reserve` más reciente (cierra sobre el estado actual).
+  setSubmitHandler(reserve);
+  useEffect(() => () => setSubmitHandler(null), []);
 
   return (
     <section id="reserva" aria-labelledby="reserva-title" class="flex scroll-mt-28 flex-col gap-6">
@@ -218,6 +340,7 @@ export default function ReservationBuilder({
             value={date}
             min={today || undefined}
             required
+            aria-invalid={submitError && !date ? 'true' : undefined}
             onInput={(e) => onDate(e.currentTarget.value)}
           />
         </label>
@@ -227,13 +350,15 @@ export default function ReservationBuilder({
             class={field}
             value={slotIndex}
             required
+            aria-invalid={submitError && date && !slot ? 'true' : undefined}
             disabled={slots.length === 0}
             onChange={(e) => setSlotIndex(e.currentTarget.value)}
           >
             <option value="">{date ? 'Elige el horario' : 'Elige primero la fecha'}</option>
             {slots.map((sl, i) => (
-              <option key={sl.start} value={i}>
+              <option key={sl.start} value={i} disabled={isTaken(sl)}>
                 {formatTime(toTime(sl.start))} - {formatTime(toTime(sl.end))}
+                {isTaken(sl) ? ' (reservado)' : ''}
               </option>
             ))}
           </select>
@@ -249,6 +374,7 @@ export default function ReservationBuilder({
             value={guests}
             placeholder={`Hasta ${maxCapacity}`}
             required
+            aria-invalid={submitError && guestsNumber < 1 ? 'true' : undefined}
             onInput={(e) => setGuests(e.currentTarget.value.replace(/\D/g, ''))}
           />
         </label>
@@ -390,21 +516,44 @@ export default function ReservationBuilder({
           </ul>
         )}
 
-        <a
-          href={quoteHref}
-          target="_blank"
-          rel="noopener"
-          aria-disabled={canQuote ? undefined : 'true'}
-          class="inline-flex items-center justify-center rounded-pill bg-primary px-5 py-2.5 text-small font-semibold text-primary-contrast transition-colors hover:bg-primary-hover aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:hover:bg-primary"
-        >
-          Cotizar por WhatsApp
-        </a>
-        {!canQuote && (
-          <p class="text-small text-text-muted">Elige {missing.join(', ')} para cotizar.</p>
+        {userId === null && canReserve ? (
+          <a
+            href={loginHref}
+            class="inline-flex items-center justify-center rounded-pill bg-primary px-5 py-2.5 text-small font-semibold text-primary-contrast transition-colors hover:bg-primary-hover"
+          >
+            Inicia sesión para reservar
+          </a>
+        ) : (
+          <button
+            type="button"
+            onClick={reserve}
+            disabled={!canReserve || submitting || userId === undefined}
+            class="inline-flex items-center justify-center rounded-pill bg-primary px-5 py-2.5 text-small font-semibold text-primary-contrast transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-primary"
+          >
+            {submitting ? 'Reservando…' : 'Reservar'}
+          </button>
+        )}
+        {slotTaken && (
+          <p class="text-small font-medium" role="alert">
+            Ese turno ya fue reservado. Elige otro.
+          </p>
+        )}
+        {availabilityError && (
+          <p class="text-small text-text-muted" role="status">
+            No pudimos revisar la disponibilidad. Se validará al reservar.
+          </p>
+        )}
+        {submitError && (
+          <p class="text-small font-medium" role="alert">
+            {submitError}
+          </p>
+        )}
+        {!canReserve && !slotTaken && (
+          <p class="text-small text-text-muted">Elige {missing.join(', ')} para reservar.</p>
         )}
 
         <p class="text-small text-text-muted">
-          Precio referencial, sujeto a confirmación y disponibilidad.
+          Precio referencial. Tu reserva queda pendiente hasta que el equipo la confirme.
         </p>
       </div>
     </section>
