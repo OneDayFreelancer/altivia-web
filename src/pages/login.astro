@@ -1,0 +1,17 @@
+---
+import LoginForm from '@/components/islands/LoginForm';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Iniciar sesión" solidHeader>
+  <section class="mx-auto flex max-w-md flex-col gap-6 px-4 pb-24 pt-36 md:px-8">
+    <div class="flex flex-col gap-2">
+      <h1 class="text-3xl font-semibold text-balance md:text-h2">Inicia sesión</h1>
+      <p class="text-body text-text-muted">Para reservar espacios y ver tus reservas.</p>
+    </div>
+    <LoginForm client:load />
+    <p class="text-small text-text-muted">
+      ¿No tienes cuenta? <a href="/registro" class="font-semibold text-text underline">Regístrate</a>
+    </p>
+  </section>
+</BaseLayout>

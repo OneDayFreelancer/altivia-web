@@ -12,9 +12,9 @@ export const NAV_ITEMS = [
   { label: 'Publicar propiedad', href: '/publicar' },
 ] as const;
 
-/** Destinos de cuenta. Placeholder hasta implementar auth. */
+/** Destinos de cuenta. */
 export const AUTH_LINKS = {
-  login: { label: 'Log in', href: '#' },
+  login: { label: 'Log in', href: '/login' },
   signUp: { label: 'Sign Up', href: '/registro' },
 } as const;
 

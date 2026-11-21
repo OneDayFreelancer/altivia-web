@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'preact/hooks';
-import { digitsOnly, validatePhone } from '@/lib/auth';
+import { currentNext, digitsOnly, requireSession, validatePhone } from '@/lib/auth';
 import { supabase } from '@/lib/supabase';
 import { alertBox, field, fieldError, hint, label, primaryBtn } from './formStyles';
 
@@ -12,19 +12,16 @@ export default function CompleteProfileForm() {
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getSession().then(async ({ data }) => {
-      const user = data.session?.user;
-      if (!user) {
-        window.location.replace('/registro');
-        return;
-      }
+    requireSession().then(async (session) => {
+      const user = session?.user;
+      if (!user) return;
       const { data: profile } = await supabase
         .from('profiles')
         .select('phone')
         .eq('id', user.id)
         .maybeSingle();
       if (profile?.phone) {
-        window.location.replace('/');
+        window.location.replace(currentNext());
         return;
       }
       setUserId(user.id);
@@ -51,7 +48,7 @@ export default function CompleteProfileForm() {
       setFormError('No pudimos guardar tu celular. Inténtalo de nuevo.');
       return;
     }
-    window.location.replace('/');
+    window.location.replace(currentNext());
   };
 
   if (!userId) {
