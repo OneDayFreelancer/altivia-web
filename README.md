@@ -74,4 +74,25 @@ capacity: 1 # opcional: personas que cubre cada unidad
 Para ofrecerlo en un espacio, agrega el slug a `complements:` en `src/content/spaces/<espacio>.md`.
 La cotización se calcula en `src/lib/quote.ts` (`buildQuote`).
 
+## Turnos de alquiler
+
+El espacio se alquila solo por horas, en un día, y el cliente elige un turno fijo según el día de la semana.
+Los turnos van en `schedule` del frontmatter de `src/content/spaces/<espacio>.md`.
+
+```yaml
+schedule:
+  default: # obligatorio: aplica a todos los días
+    - "10:00-14:00"
+    - "14:00-18:00"
+    - "18:00-24:00"
+  sabado: # opcional: reemplaza a default solo ese día
+    - "10:00-16:00"
+    - "16:00-24:00"
+```
+
+- Días válidos: `lunes`, `martes`, `miercoles`, `jueves`, `viernes`, `sabado`, `domingo`.
+- Formato `"HH:MM-HH:MM"`, inicio < fin, fin máximo `24:00` (se muestra `12:00 am`).
+- Un turno inválido rompe el build con error de schema (`src/content.config.ts`).
+- Precio base = `priceFrom` × horas del turno. Solo se ofrece reserva si `priceUnit: hora`.
+
 Datos de prueba: precios ficticios e imagen `placeholder.jpg`; reemplazar por las reales.
