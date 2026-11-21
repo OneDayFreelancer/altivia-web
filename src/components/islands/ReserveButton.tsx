@@ -22,7 +22,7 @@ export default function ReserveButton({ hideHint, class: cls = '' }: Props) {
     return subscribeReservation(setS);
   }, []);
 
-  if (s.userId === null) {
+  if (s.userId === null && s.canReserve) {
     return (
       <a href={s.loginHref} class={`${base} ${cls}`}>
         Inicia sesión para reservar

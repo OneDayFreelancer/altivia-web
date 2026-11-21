@@ -474,7 +474,7 @@ export default function ReservationBuilder({
           </ul>
         )}
 
-        {userId === null ? (
+        {userId === null && canReserve ? (
           <a
             href={loginHref}
             class="inline-flex items-center justify-center rounded-pill bg-primary px-5 py-2.5 text-small font-semibold text-primary-contrast transition-colors hover:bg-primary-hover"
@@ -506,7 +506,7 @@ export default function ReservationBuilder({
             {submitError}
           </p>
         )}
-        {userId !== null && !canReserve && !slotTaken && (
+        {!canReserve && !slotTaken && (
           <p class="text-small text-text-muted">Elige {missing.join(', ')} para reservar.</p>
         )}
 
