@@ -38,9 +38,7 @@ export default function MyReservations() {
   const [items, setItems] = useState<Reservation[] | null>(null);
   const [error, setError] = useState('');
   const [busyId, setBusyId] = useState('');
-  const [created] = useState(
-    () => new URLSearchParams(window.location.search).get('nueva') === '1',
-  );
+  const [created, setCreated] = useState(false);
 
   const load = async () => {
     try {
@@ -52,6 +50,8 @@ export default function MyReservations() {
   };
 
   useEffect(() => {
+    // `window` solo existe en el cliente (el island también se renderiza en el servidor).
+    setCreated(new URLSearchParams(window.location.search).get('nueva') === '1');
     requireSession().then((session) => session && load());
   }, []);
 
