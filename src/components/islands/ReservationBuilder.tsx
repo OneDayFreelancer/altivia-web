@@ -149,6 +149,43 @@ export default function ReservationBuilder({
     return () => data.subscription.unsubscribe();
   }, []);
 
+  // Persiste el formulario en sessionStorage: sobrevive al login y a recargas.
+  const draftKey = `reserva:${spaceSlug}`;
+  const [restored, setRestored] = useState(false);
+
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem(draftKey);
+      if (raw) {
+        const d = JSON.parse(raw) as {
+          date?: string;
+          slotIndex?: string;
+          guests?: string;
+          selection?: Record<string, { quantity: number; hours: number }>;
+        };
+        // Una fecha ya pasada no se restaura.
+        if (d.date && d.date >= localToday()) {
+          setDate(d.date);
+          setSlotIndex(d.slotIndex ?? '');
+        }
+        setGuests(d.guests ?? '');
+        setSelection(d.selection ?? {});
+      }
+    } catch {
+      // Borrador corrupto o storage bloqueado: se ignora.
+    }
+    setRestored(true);
+  }, [draftKey]);
+
+  useEffect(() => {
+    if (!restored) return;
+    try {
+      sessionStorage.setItem(draftKey, JSON.stringify({ date, slotIndex, guests, selection }));
+    } catch {
+      // Storage bloqueado: sin persistencia.
+    }
+  }, [restored, draftKey, date, slotIndex, guests, selection]);
+
   // Turnos ya reservados por otros en la fecha elegida.
   useEffect(() => {
     setTaken([]);
@@ -256,6 +293,11 @@ export default function ReservationBuilder({
         },
         userId,
       );
+      try {
+        sessionStorage.removeItem(draftKey);
+      } catch {
+        // sin storage
+      }
       window.location.assign('/mis-reservas?nueva=1');
     } catch (e) {
       setSubmitError(reservationErrorMessage(e as { code?: string; message: string }));
