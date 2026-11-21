@@ -8,6 +8,7 @@ import {
   type TimeSlot,
   toTime,
 } from '@/lib/quote';
+import { setReservationState, setSubmitHandler } from '@/lib/reservationStore';
 import {
   createReservation,
   fetchTakenSlots,
@@ -256,6 +257,15 @@ export default function ReservationBuilder({
       setSubmitting(false);
     }
   };
+
+  // Comparte el estado con los botones "Reservar" de la página.
+  useEffect(() => {
+    setReservationState({ userId, canReserve, submitting, missing, loginHref });
+  }, [userId, canReserve, submitting, missing.join('|'), loginHref]);
+
+  // Siempre el `reserve` más reciente (cierra sobre el estado actual).
+  setSubmitHandler(reserve);
+  useEffect(() => () => setSubmitHandler(null), []);
 
   return (
     <section id="reserva" aria-labelledby="reserva-title" class="flex scroll-mt-28 flex-col gap-6">
