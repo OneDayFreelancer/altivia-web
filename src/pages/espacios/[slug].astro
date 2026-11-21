@@ -61,7 +61,6 @@ const og = await getImage({ src: images[0].src, width: 1200, height: 630, format
 const ogImage = new URL(og.src, Astro.site).href;
 
 const description = `${typeLabel} en ${locationLabel} para hasta ${maxCapacity} personas. Desde S/ ${priceFrom} por ${unit}.`;
-const spaceUrl = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : Astro.url.href;
 const quoteHref = whatsappHref(
   `Hola, quiero cotizar ${name} (${locationLabel}). ¿Tienen disponibilidad?`,
 );
@@ -110,8 +109,8 @@ const quoteHref = whatsappHref(
         {hourly && (
           <ReservationBuilder
             client:load
+            spaceSlug={space.id}
             spaceName={name}
-            spaceUrl={spaceUrl}
             locationLabel={locationLabel}
             pricePerHour={priceFrom}
             maxCapacity={maxCapacity}

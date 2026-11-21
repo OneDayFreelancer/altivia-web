@@ -1,0 +1,14 @@
+---
+import MyReservations from '@/components/islands/MyReservations';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Mis reservas" solidHeader>
+  <section class="mx-auto flex max-w-2xl flex-col gap-6 px-4 pb-24 pt-36 md:px-8">
+    <div class="flex flex-col gap-2">
+      <h1 class="text-3xl font-semibold text-balance md:text-h2">Mis reservas</h1>
+      <p class="text-body text-text-muted">Revisa el estado de tus reservas o cancélalas.</p>
+    </div>
+    <MyReservations client:load />
+  </section>
+</BaseLayout>

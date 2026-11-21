@@ -80,6 +80,9 @@ export default function AuthNav({ loginLabel, loginHref, signUpLabel, signUpHref
         <div class="flex items-center gap-3 text-small font-semibold text-white">
           {avatar}
           <span class="max-w-32 truncate">{name}</span>
+          <a href="/mis-reservas" class={logoutClass}>
+            Mis reservas
+          </a>
           <button type="button" class={logoutClass} onClick={logout} disabled={busy}>
             Cerrar sesión
           </button>
@@ -118,6 +121,9 @@ export default function AuthNav({ loginLabel, loginHref, signUpLabel, signUpHref
             id="user-menu"
             class="absolute right-0 top-full mt-2 min-w-44 rounded-card border border-white/10 bg-dark p-1 shadow-soft"
           >
+            <a href="/mis-reservas" class={`${logoutClass} block w-full`}>
+              Mis reservas
+            </a>
             <button type="button" class={`${logoutClass} w-full`} onClick={logout} disabled={busy}>
               Cerrar sesión
             </button>
