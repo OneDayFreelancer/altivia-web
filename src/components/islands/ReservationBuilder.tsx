@@ -55,7 +55,7 @@ const PRICING_LABEL: Record<Pricing, (c: ComplementOption) => string> = {
 };
 
 const field =
-  'w-full rounded-md border border-border bg-surface px-3 py-2 text-body text-text focus-visible:outline-2 focus-visible:outline-offset-1';
+  'w-full rounded-md border border-border aria-[invalid=true]:border-red-700 bg-surface px-3 py-2 text-body text-text focus-visible:outline-2 focus-visible:outline-offset-1';
 const label = 'flex flex-col gap-1 text-small font-semibold';
 const stepper =
   'inline-flex size-9 items-center justify-center rounded-pill border border-border bg-surface text-body font-semibold hover:bg-surface-alt disabled:cursor-not-allowed disabled:opacity-40';
@@ -228,7 +228,17 @@ export default function ReservationBuilder({
   const loginHref = `/login?next=${encodeURIComponent(`/espacios/${spaceSlug}#reserva`)}`;
 
   const reserve = async () => {
-    if (!canReserve || !userId || submitting || !slot) return;
+    if (!userId || submitting) return;
+    // Validación previa: nada se envía con campos vacíos o turno ocupado.
+    if (!canReserve || !slot) {
+      setSubmitError(
+        slotTaken
+          ? 'Ese turno ya fue reservado. Elige otro.'
+          : `Completa ${missing.join(', ') || 'los datos de la reserva'} para reservar.`,
+      );
+      document.getElementById('reserva')?.scrollIntoView({ behavior: 'smooth' });
+      return;
+    }
     setSubmitting(true);
     setSubmitError('');
     try {
@@ -258,6 +268,11 @@ export default function ReservationBuilder({
     }
   };
 
+  // Al completar los datos, se limpia el aviso de validación.
+  useEffect(() => {
+    if (canReserve) setSubmitError('');
+  }, [canReserve]);
+
   // Comparte el estado con los botones "Reservar" de la página.
   useEffect(() => {
     setReservationState({ userId, canReserve, submitting, missing, loginHref });
@@ -283,6 +298,7 @@ export default function ReservationBuilder({
             value={date}
             min={today || undefined}
             required
+            aria-invalid={submitError && !date ? 'true' : undefined}
             onInput={(e) => onDate(e.currentTarget.value)}
           />
         </label>
@@ -292,6 +308,7 @@ export default function ReservationBuilder({
             class={field}
             value={slotIndex}
             required
+            aria-invalid={submitError && date && !slot ? 'true' : undefined}
             disabled={slots.length === 0}
             onChange={(e) => setSlotIndex(e.currentTarget.value)}
           >
@@ -315,6 +332,7 @@ export default function ReservationBuilder({
             value={guests}
             placeholder={`Hasta ${maxCapacity}`}
             required
+            aria-invalid={submitError && guestsNumber < 1 ? 'true' : undefined}
             onInput={(e) => setGuests(e.currentTarget.value.replace(/\D/g, ''))}
           />
         </label>
