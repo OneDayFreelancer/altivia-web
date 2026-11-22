@@ -1,0 +1,87 @@
+---
+import SearchForm from '@/components/sections/SearchForm.astro';
+import Button from '@/components/ui/Button.astro';
+import SpaceCard from '@/components/ui/SpaceCard.astro';
+import { SEARCH_ACTION } from '@/data/search';
+import { getSpaces } from '@/data/spaces';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+
+// Sitio estático: se renderizan todos los espacios y el filtro (query string) se aplica en el cliente.
+const spaces = await getSpaces();
+---
+
+<BaseLayout title="Alquilar un espacio" description="Explora y filtra los espacios de Altivia por tipo, precio, local y capacidad." solidHeader whatsappFab>
+  <section class="mx-auto max-w-7xl px-4 pb-16 pt-32 md:px-8 md:pb-24">
+    <h1 class="mb-8 text-3xl font-semibold text-balance md:text-h2">Alquilar un espacio</h1>
+
+    <SearchForm />
+
+    <p id="results-count" role="status" aria-live="polite" class="mb-6 mt-8 text-small text-text-muted"></p>
+
+    <div id="list-wrap">
+    <ul id="space-list" class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6 lg:grid-cols-3">
+      {
+        spaces.map((space) => (
+          <li
+            class="h-64"
+            data-type={space.data.type}
+            data-location={space.data.location}
+            data-price={space.data.priceFrom}
+            data-capacity={space.data.maxCapacity}
+          >
+            <SpaceCard space={space} sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" />
+          </li>
+        ))
+      }
+    </ul>
+    </div>
+
+    <div id="empty-state" hidden>
+      <div class="flex flex-col items-start gap-4 rounded-card bg-surface p-8 shadow-soft">
+        <h2 class="text-h4 font-semibold">No encontramos espacios con esos filtros</h2>
+        <p class="text-body text-text-muted">Prueba con otra capacidad, precio o local.</p>
+        <Button href={SEARCH_ACTION} variant="outline">Limpiar filtros</Button>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  import { matchesFilters, parseFilters } from '@/lib/spaceFilter';
+
+  const params = new URLSearchParams(location.search);
+  const filters = parseFilters(params);
+
+  // Refleja los filtros activos en el formulario.
+  const setValue = (name: string, value: string) => {
+    const el = document.querySelector<HTMLInputElement | HTMLSelectElement>(`#search-form [name="${name}"]`);
+    if (el) el.value = value;
+  };
+  setValue('type', filters.type);
+  setValue('price', filters.price);
+  setValue('location', filters.location);
+  setValue('capacity', filters.capacity === null ? '' : String(filters.capacity));
+
+  const items = document.querySelectorAll<HTMLElement>('#space-list > li');
+  let visible = 0;
+  for (const li of items) {
+    const ok = matchesFilters(
+      {
+        type: li.dataset.type ?? '',
+        location: li.dataset.location ?? '',
+        price: Number(li.dataset.price),
+        capacity: Number(li.dataset.capacity),
+      },
+      filters,
+    );
+    li.hidden = !ok;
+    if (ok) visible++;
+  }
+
+  const list = document.getElementById('list-wrap');
+  const empty = document.getElementById('empty-state');
+  const count = document.getElementById('results-count');
+  if (list) list.hidden = visible === 0;
+  if (empty) empty.hidden = visible !== 0;
+  if (count) count.textContent = `${visible} ${visible === 1 ? 'espacio encontrado' : 'espacios encontrados'}`;
+</script>
