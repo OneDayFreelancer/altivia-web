@@ -20,7 +20,7 @@ const [large, vertical, smallTop, smallBottom] = await getFeaturedSpaces();
   <ul class="grid grid-cols-1 gap-4 md:h-[21rem] md:grid-cols-4 md:grid-rows-2 md:gap-6">
     {large && (
       <li class="h-56 md:col-span-2 md:row-span-2 md:h-auto">
-        <SpaceCard space={large} sizes="(min-width: 768px) 50vw, 100vw" showCapacity />
+        <SpaceCard space={large} sizes="(min-width: 768px) 50vw, 100vw" />
       </li>
     )}
     {vertical && (
