@@ -1,0 +1,35 @@
+---
+import { Picture } from 'astro:assets';
+import { COMPLEMENTS_SECTION, getComplementCards } from '@/data/complements';
+
+const cards = await getComplementCards();
+---
+
+<section id="complementos" aria-labelledby="complements-title" class="mx-auto max-w-7xl px-4 pb-16 md:px-8 md:pb-24">
+  <h2 id="complements-title" class="mb-8 text-3xl font-semibold text-balance md:mb-12 md:text-h2">{COMPLEMENTS_SECTION.title}</h2>
+
+  <ul class="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 lg:grid-cols-4">
+    {
+      cards.map((card) => (
+        <li class="flex flex-col gap-4">
+          <div class="aspect-[3/4] overflow-hidden rounded-card bg-surface-alt">
+            <Picture
+              src={card.image.src}
+              alt={card.image.alt}
+              widths={[320, 480, 768]}
+              sizes="(min-width: 1024px) 25vw, (min-width: 768px) 50vw, 100vw"
+              formats={['avif', 'webp']}
+              loading="lazy"
+              pictureAttributes={{ class: 'block h-full w-full' }}
+              class="h-full w-full object-cover"
+            />
+          </div>
+          <div class="flex flex-col gap-1">
+            <h3 class="text-h4 font-semibold">{card.name}</h3>
+            <p class="text-small text-text-muted">{card.description}</p>
+          </div>
+        </li>
+      ))
+    }
+  </ul>
+</section>
