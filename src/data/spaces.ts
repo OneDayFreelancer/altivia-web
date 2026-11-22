@@ -25,3 +25,12 @@ export const spaceHref = (space: Space): string => `/espacios/${space.id}`;
 /** Complementos que ofrece un espacio, resueltos desde sus referencias. */
 export const getSpaceComplements = async (space: Space): Promise<Complement[]> =>
   getEntries(space.data.complements);
+
+/** Capacidad máxima por tipo de espacio: el mayor `maxCapacity` entre los locales de ese tipo. */
+export const maxCapacityByType = async (): Promise<Record<string, number>> => {
+  const result: Record<string, number> = {};
+  for (const { data } of await getSpaces()) {
+    result[data.type] = Math.max(result[data.type] ?? 0, data.maxCapacity);
+  }
+  return result;
+};
