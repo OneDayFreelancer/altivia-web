@@ -12,10 +12,10 @@ export const COMPLEMENTS_SECTION = {
 } as const;
 
 export const COMPLEMENT_CARDS: readonly { slug: string; description: string }[] = [
-  { slug: 'equipo-de-sonido', description: 'Parlantes con micrófono inalámbrico para tu evento.' },
-  { slug: 'proyector', description: 'Proyector HD con cable HDMI para presentaciones y videos.' },
-  { slug: 'laptop', description: 'Laptop lista para tus presentaciones.' },
-  { slug: 'sillas', description: 'Sillas adicionales para que todos tus invitados estén cómodos.' },
+  { slug: 'animadora', description: 'Animación y diversión para llenar tu evento de alegría y momentos inolvidables.' },
+  { slug: 'chef', description: 'Chef parrillero para disfrutar de una auténtica parrillada sin preocupaciones.' },
+  { slug: 'decoradora', description: 'Decoración personalizada para transformar tu evento en una ocasión especial.' },
+  { slug: 'dj', description: 'Música y ambiente para que tus invitados disfruten y bailen durante toda la celebración.' },
 ];
 
 /** Tarjetas resueltas contra la collection; omite slugs que ya no existan. */

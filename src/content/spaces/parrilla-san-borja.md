@@ -28,6 +28,8 @@ amenities:
 complements:
   - sillas
   - equipo-de-sonido
+  - chef
+  - dj
 ---
 
 Disfruta de un ambiente rodeado de naturaleza, con amplias mesas, parrilla independiente e iluminación cálida. Un espacio acogedor, ideal para compartir una buena parrillada, brindar con amigos y celebrar momentos especiales al aire libre.

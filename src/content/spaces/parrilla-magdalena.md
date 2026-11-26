@@ -28,6 +28,8 @@ amenities:
 complements:
   - sillas
   - equipo-de-sonido
+  - chef
+  - dj    
 ---
 
 Disfruta de una parrillada entre amigos y familiares en un ambiente acogedor, moderno y al aire libre. El escenario perfecto para crear recuerdos inolvidables.

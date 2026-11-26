@@ -81,6 +81,7 @@ function Stepper({
   onChange,
   name,
   unit,
+  onBlocked,
 }: {
   value: number;
   min: number;
@@ -88,6 +89,8 @@ function Stepper({
   onChange: (v: number) => void;
   name: string;
   unit: string;
+  /** Si existe, "+" queda activo pero solo avisa por qué aún no se puede aumentar. */
+  onBlocked?: () => void;
 }) {
   return (
     <fieldset class="m-0 inline-flex items-center gap-2 border-0 p-0">
@@ -108,8 +111,8 @@ function Stepper({
         type="button"
         class={stepper}
         aria-label={`Más ${unit} de ${name}`}
-        disabled={value >= max}
-        onClick={() => onChange(clamp(value + 1, min, max))}
+        disabled={!onBlocked && value >= max}
+        onClick={() => (onBlocked ? onBlocked() : onChange(clamp(value + 1, min, max)))}
       >
         <span aria-hidden="true">+</span>
       </button>
@@ -131,6 +134,8 @@ export default function ReservationBuilder({
   const [date, setDate] = useState('');
   const [slotIndex, setSlotIndex] = useState('');
   const [guests, setGuests] = useState('');
+  // Complemento por hora en el que se intentó subir horas sin tener el turno.
+  const [hoursNotice, setHoursNotice] = useState('');
   const [selection, setSelection] = useState<Record<string, { quantity: number; hours: number }>>(
     {},
   );
@@ -247,6 +252,11 @@ export default function ReservationBuilder({
       today,
     ],
   );
+
+  // Las horas de un servicio dependen del turno: sin él no hay tope que aplicar.
+  useEffect(() => {
+    if (slot) setHoursNotice('');
+  }, [slot]);
 
   const update = (slug: string, patch: Partial<{ quantity: number; hours: number }>) =>
     setSelection((prev) => ({ ...prev, [slug]: { ...prev[slug], ...patch } }));
@@ -449,8 +459,14 @@ export default function ReservationBuilder({
                               min={1}
                               max={serviceMax}
                               onChange={(v) => update(c.slug, { hours: v })}
+                              onBlocked={slot ? undefined : () => setHoursNotice(c.slug)}
                             />
                           </div>
+                        )}
+                        {hoursNotice === c.slug && !slot && (
+                          <p class="w-full font-medium" role="alert">
+                            {date ? 'Elige primero el horario.' : 'Elige primero la fecha.'}
+                          </p>
                         )}
                       </div>
                     )}

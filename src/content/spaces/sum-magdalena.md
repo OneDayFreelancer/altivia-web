@@ -31,6 +31,9 @@ amenities:
 complements:
   - sillas
   - equipo-de-sonido
+  - decoradora
+  - animadora
+  - dj
 ---
 
 Un espacio elegante y acogedor, diseñado para celebrar tus momentos especiales. Cuenta con una moderna barra, cómodas zonas de descanso y un ambiente versátil que combina calidez y sofisticación, ideal para reuniones familiares, cumpleaños y eventos privados.

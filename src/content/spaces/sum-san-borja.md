@@ -27,6 +27,9 @@ amenities:
 complements:
   - sillas
   - equipo-de-sonido
+  - animadora
+  - decoradora
+  - dj
 ---
 
 Un espacio moderno y acogedor con cómodos sillones, iluminación cálida y vista a la ciudad. Ideal para reuniones familiares, celebraciones privadas y encuentros con amigos en un ambiente íntimo y relajado.

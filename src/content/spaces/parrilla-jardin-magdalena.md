@@ -24,6 +24,8 @@ amenities:
 complements:
   - sillas
   - equipo-de-sonido
+  - chef
+  - dj
 ---
 
 Disfruta de una experiencia al aire libre en un ambiente que combina naturaleza, comodidad y diseño. Cuenta con una zona de parrilla, amplia barra, jardín y área de descanso con iluminación cálida, ideal para compartir con amigos, celebrar ocasiones especiales y disfrutar de momentos inolvidables.
