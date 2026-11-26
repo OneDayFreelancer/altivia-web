@@ -42,6 +42,9 @@ const shareImage =
     (await getImage({ src: HERO.image, width: 1200, height: 630, format: 'jpg' })).src,
     Astro.site,
   ).href;
+
+const umamiId = import.meta.env.PUBLIC_UMAMI_ID;
+const umamiSrc = import.meta.env.PUBLIC_UMAMI_SRC;
 ---
 
 <!doctype html>
@@ -67,6 +70,15 @@ const shareImage =
       <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')} />
     )}
     <title>{pageTitle}</title>
+    {import.meta.env.PROD && (
+        <script
+            is:inline
+            defer
+            src={umamiSrc}
+            data-website-id={umamiId}
+            data-domains="altivia.lat"
+            ></script>
+    )}
   </head>
   <body class="bg-surface font-sans text-text antialiased">
     <Header solid={solidHeader} />
