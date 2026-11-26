@@ -2,7 +2,7 @@
 name: DJ
 category: servicio
 image:
-  src: ../../assets/complements/placeholder.jpg
+  src: ../../assets/complements/dj.jpg
   alt: DJ en cabina
 pricing: hora
 price: 150

@@ -88,3 +88,7 @@ const umamiSrc = import.meta.env.PUBLIC_UMAMI_SRC;
     {whatsappFab && <WhatsAppFab class={fabClass} />}
   </body>
 </html>
+<script>
+  import Clarity from "@microsoft/clarity";
+  Clarity.init(import.meta.env.PUBLIC_CLARITY_ID);
+</script>

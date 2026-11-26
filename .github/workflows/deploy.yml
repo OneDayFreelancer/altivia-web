@@ -66,8 +66,9 @@ jobs:
           build-args: |
             PUBLIC_SUPABASE_URL=${{ env.PUBLIC_SUPABASE_URL }}
             PUBLIC_SUPABASE_ANON_KEY=${{ env.PUBLIC_SUPABASE_ANON_KEY }}
-            PUBLIC_UMAMI_SRC=${{ env.PUBLIC_UMAMI_SRC }}
             PUBLIC_UMAMI_ID=${{ env.PUBLIC_UMAMI_ID }}
+            PUBLIC_UMAMI_SRC=${{ env.PUBLIC_UMAMI_SRC }}
+            PUBLIC_CLARITY_ID=${{env.PUBLIC_CLARITY_ID}}
           tags: |
             ${{ steps.meta.outputs.image }}:latest
             ${{ steps.meta.outputs.image }}:${{ github.sha }}
