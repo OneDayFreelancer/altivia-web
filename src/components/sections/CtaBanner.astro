@@ -6,13 +6,13 @@ import { CTA } from '@/data/cta';
 const { title, buttonLabel, href, image, imageAlt } = CTA;
 ---
 
-<section aria-labelledby="cta-title" class="mx-auto max-w-7xl px-4 pb-16 md:px-8 md:pb-24">
+<section aria-labelledby="cta-title" class="mx-auto max-w-7xl px-4 py-16 md:px-8 md:py-24">
   <div class="grid grid-cols-1 items-center gap-8 md:grid-cols-2 md:gap-12">
-    <div class="flex flex-col items-start gap-6 md:gap-8">
+    <div data-animate class="flex flex-col items-start gap-6 md:gap-8">
       <h2 id="cta-title" class="text-3xl font-semibold leading-tight text-balance md:text-h2">{title}</h2>
       <Button href={href}>{buttonLabel}</Button>
     </div>
-    <div class="aspect-[4/3] overflow-hidden rounded-card bg-surface-alt">
+    <div data-animate class="aspect-[4/3] overflow-clip bg-surface-alt">
       <Picture
         src={image}
         alt={imageAlt}
@@ -20,7 +20,7 @@ const { title, buttonLabel, href, image, imageAlt } = CTA;
         sizes="(min-width: 768px) 50vw, 100vw"
         formats={['avif', 'webp']}
         loading="lazy"
-        pictureAttributes={{ class: 'block h-full w-full' }}
+        pictureAttributes={{ class: 'parallax block h-full w-full' }}
         class="h-full w-full object-cover"
       />
     </div>

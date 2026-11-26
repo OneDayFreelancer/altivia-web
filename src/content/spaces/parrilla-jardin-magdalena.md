@@ -2,18 +2,20 @@
 name: Parrilla Jardín Magdalena
 type: parrilla-jardin
 location: magdalena
-maxCapacity: 40
-priceFrom: 180
-priceUnit: hora
+maxCapacity: 18
+priceFrom: 250
+priceUnit: turno
 featuredOrder: 2
 images:
-  - src: ../../assets/spaces/jardin-1.jpg
+  - src: ../../assets/spaces/magdalena/jardin-1.jpg
     alt: Jardín con sillas y decoración floral para eventos en Magdalena
 schedule:
   default:
-    - "10:00-14:00"
-    - "14:00-18:00"
-    - "18:00-24:00"
+    - "11:00 a.m - 11:59 p.m"
+  viernes:
+    - "11:00 a.m - 02:00 a.m"
+  sabado:
+    - "11:00 a.m - 02:00 a.m"
 amenities:
   - Parrilla a carbón
   - Jardín amplio
@@ -21,12 +23,7 @@ amenities:
   - Baño privado
 complements:
   - sillas
-  - mesa
   - equipo-de-sonido
-  - proyector
-  - dj
-  - barman
-  - payasos
 ---
 
-Texto de prueba. Reemplazar con la descripción real de la parrilla con jardín de Magdalena: ambiente, distribución y reglas de uso.
+Disfruta de una experiencia al aire libre en un ambiente que combina naturaleza, comodidad y diseño. Cuenta con una zona de parrilla, amplia barra, jardín y área de descanso con iluminación cálida, ideal para compartir con amigos, celebrar ocasiones especiales y disfrutar de momentos inolvidables.

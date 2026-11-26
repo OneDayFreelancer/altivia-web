@@ -2,21 +2,23 @@
 name: SUM San Borja
 type: sum
 location: san-borja
-maxCapacity: 100
-priceFrom: 380
-priceUnit: hora
+maxCapacity:  50
+priceFrom: 500
+priceUnit: turno
 images:
-  - src: ../../assets/spaces/sum-3.jpg
+  - src: ../../assets/spaces/san-borja/sum-3.jpg
     alt: Mesa larga con arreglos florales para banquete en San Borja
-  - src: ../../assets/spaces/sum-1.jpg
+  - src: ../../assets/spaces/san-borja/sum-1.jpg
     alt: Salón de usos múltiples con mesas redondas
-  - src: ../../assets/spaces/sum-2.jpg
+  - src: ../../assets/spaces/san-borja/sum-2.jpg
     alt: Salón de eventos decorado con mesas puestas
 schedule:
   default:
-    - "10:00-14:00"
-    - "14:00-18:00"
-    - "18:00-24:00"
+    - "5:00 p.m - 02:00 a.m"
+  viernes:
+    - "5:00 p.m - 02:00 a.m"
+  sabado:
+    - "5:00 p.m - 02:00 a.m"
 amenities:
   - Salón techado
   - Aire acondicionado
@@ -24,12 +26,7 @@ amenities:
   - Baño privado
 complements:
   - sillas
-  - mesa
-  - proyector
-  - pantalla
-  - laptop
   - equipo-de-sonido
-  - dj
 ---
 
-Texto de prueba. Reemplazar con la descripción real de el salón de usos múltiples de San Borja: ambiente, distribución y reglas de uso.
+Un espacio moderno y acogedor con cómodos sillones, iluminación cálida y vista a la ciudad. Ideal para reuniones familiares, celebraciones privadas y encuentros con amigos en un ambiente íntimo y relajado.

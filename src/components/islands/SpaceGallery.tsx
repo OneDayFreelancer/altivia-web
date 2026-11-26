@@ -16,7 +16,7 @@ interface Props {
 const SWIPE_THRESHOLD = 40;
 
 const arrow =
-  'absolute top-1/2 z-10 inline-flex size-11 -translate-y-1/2 items-center justify-center rounded-pill bg-white/90 text-text shadow-soft transition-colors hover:bg-white';
+  'absolute top-1/2 z-10 inline-flex size-11 -translate-y-1/2 items-center justify-center rounded-pill bg-white/90 text-black shadow-soft transition-colors hover:bg-white';
 
 export default function SpaceGallery({ images, width, height }: Props) {
   const [index, setIndex] = useState(0);
@@ -55,7 +55,7 @@ export default function SpaceGallery({ images, width, height }: Props) {
       onKeyDown={onKeyDown}
     >
       <div
-        class="relative overflow-hidden rounded-card bg-surface-alt"
+        class="relative overflow-clip bg-surface-alt"
         style={{ aspectRatio: `${width} / ${height}`, touchAction: 'pan-y' }}
         onTouchStart={(e) => {
           touchStartX.current = e.touches[0].clientX;
@@ -71,7 +71,7 @@ export default function SpaceGallery({ images, width, height }: Props) {
             height={height}
             loading={i === 0 ? 'eager' : 'lazy'}
             decoding="async"
-            class={`absolute inset-0 h-full w-full object-cover ${i === index ? '' : 'hidden'}`}
+            class={`parallax absolute inset-0 h-full w-full object-cover ${i === index ? '' : 'hidden'}`}
           />
         ))}
 
@@ -110,7 +110,7 @@ export default function SpaceGallery({ images, width, height }: Props) {
                   aria-label={`Ver foto ${i + 1} de ${count}`}
                   aria-current={i === index ? 'true' : undefined}
                   onClick={() => setIndex(i)}
-                  class={`block overflow-hidden rounded-md border-2 transition-colors ${i === index ? 'border-dark' : 'border-transparent opacity-70 hover:opacity-100'}`}
+                  class={`block overflow-hidden border-2 transition-colors ${i === index ? 'border-dark' : 'border-transparent opacity-70 hover:opacity-100'}`}
                 >
                   <img
                     src={img.thumb}

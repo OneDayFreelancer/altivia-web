@@ -12,7 +12,7 @@ const cards = await getComplementCards();
     {
       cards.map((card) => (
         <li class="flex flex-col gap-4">
-          <div class="aspect-[3/4] overflow-hidden rounded-card bg-surface-alt">
+          <div class="aspect-[3/4] overflow-clip bg-surface-alt">
             <Picture
               src={card.image.src}
               alt={card.image.alt}
@@ -20,7 +20,7 @@ const cards = await getComplementCards();
               sizes="(min-width: 1024px) 25vw, (min-width: 768px) 50vw, 100vw"
               formats={['avif', 'webp']}
               loading="lazy"
-              pictureAttributes={{ class: 'block h-full w-full' }}
+              pictureAttributes={{ class: 'parallax block h-full w-full' }}
               class="h-full w-full object-cover"
             />
           </div>

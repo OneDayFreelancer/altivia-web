@@ -2,10 +2,10 @@
 name: Equipo de sonido
 category: audiovisual
 image:
-  src: ../../assets/complements/placeholder.jpg
+  src: ../../assets/complements/parlante.jpg
   alt: Parlantes y micrófono
 pricing: evento
-price: 120
+price: 25
 maxQuantity: 1
 ---
 

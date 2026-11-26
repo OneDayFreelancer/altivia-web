@@ -4,7 +4,7 @@
  * DATOS DE PRUEBA: reemplazar imagen por una real del cliente.
  */
 import type { ImageMetadata } from 'astro';
-import ctaImage from '@/assets/spaces/sum-1.jpg';
+import ctaImage from '@/assets/spaces/magdalena/sum-1.jpg';
 import { whatsappHref } from '@/lib/whatsapp';
 
 export interface CtaContent {

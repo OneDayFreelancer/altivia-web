@@ -2,21 +2,24 @@
 name: Parrilla San Borja
 type: parrilla
 location: san-borja
-maxCapacity: 30
-priceFrom: 130
-priceUnit: hora
+maxCapacity: 35
+priceFrom: 250
+priceUnit: turno
+featuredOrder: 4
 images:
-  - src: ../../assets/spaces/parrilla-3.jpg
+  - src: ../../assets/spaces/san-borja/parrilla-3.jpg
     alt: Costillas a la parrilla servidas en tabla en San Borja
-  - src: ../../assets/spaces/parrilla-1.jpg
+  - src: ../../assets/spaces/san-borja/parrilla-1.jpg
     alt: Carne asada lista para servir en la parrilla
-  - src: ../../assets/spaces/parrilla-2.jpg
+  - src: ../../assets/spaces/san-borja/parrilla-1.jpg
     alt: Parrillada variada con brochetas y salsas
 schedule:
   default:
-    - "10:00-14:00"
-    - "14:00-18:00"
-    - "18:00-24:00"
+    - "5:00 p.m - 02:00 a.m"
+  viernes:
+    - "5:00 p.m - 02:00 a.m"
+  sabado:
+    - "5:00 p.m - 02:00 a.m"
 amenities:
   - Parrilla a carbón
   - Mesas y bancas
@@ -24,9 +27,7 @@ amenities:
   - Baño privado
 complements:
   - sillas
-  - mesa
   - equipo-de-sonido
-  - barman
 ---
 
-Texto de prueba. Reemplazar con la descripción real de la parrilla de San Borja: ambiente, distribución y reglas de uso.
+Disfruta de un ambiente rodeado de naturaleza, con amplias mesas, parrilla independiente e iluminación cálida. Un espacio acogedor, ideal para compartir una buena parrillada, brindar con amigos y celebrar momentos especiales al aire libre.

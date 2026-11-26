@@ -17,7 +17,8 @@ import { parseSlot } from '@/lib/quote';
 const slotList = z
   .array(
     z.string().refine((v) => parseSlot(v) !== null, {
-      message: 'Turno inválido: usar "HH:MM-HH:MM" con inicio < fin (el fin puede ser 24:00)',
+      message:
+        'Turno inválido: usar "11:00 a.m - 11:00 p.m" (fin hasta 06:00 a.m del día siguiente)',
     }),
   )
   .min(1);
@@ -40,7 +41,7 @@ const spaces = defineCollection({
       images: z.array(z.object({ src: image(), alt: z.string() })).min(1),
       /**
        * Turnos de alquiler (el cliente solo elige uno). `default` aplica a todos los días;
-       * un día (`lunes`…`domingo`) lo reemplaza. Formato `"HH:MM-HH:MM"`, fin máx. `24:00`.
+       * un día (`lunes`…`domingo`) lo reemplaza. Formato `"11:00 a.m - 02:00 a.m"`; fin hasta `06:00 a.m` del día siguiente.
        */
       schedule: z.object({
         default: slotList,

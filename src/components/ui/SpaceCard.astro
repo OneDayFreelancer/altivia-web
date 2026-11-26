@@ -1,5 +1,6 @@
 ---
 import { Picture } from 'astro:assets';
+import { PRICE_UNIT_LABEL } from '@/data/catalog';
 import { type Space, spaceHref } from '@/data/spaces';
 import { formatPrice } from '@/lib/spaceFilter';
 
@@ -13,14 +14,14 @@ interface Props {
 const { space, sizes, class: className } = Astro.props;
 const { name, images, priceFrom, priceUnit, maxCapacity } = space.data;
 const cover = images[0];
-const unit = priceUnit === 'hora' ? 'hora' : 'día';
+const unit = PRICE_UNIT_LABEL[priceUnit];
 ---
 
 <a
   href={spaceHref(space)}
   class:list={['group relative block h-full min-h-40', className]}
 >
-  <div class="absolute inset-0 overflow-hidden bg-surface-alt">
+  <div class="absolute inset-0 overflow-clip bg-surface-alt">
     <Picture
       src={cover.src}
       alt={cover.alt}
@@ -28,7 +29,7 @@ const unit = priceUnit === 'hora' ? 'hora' : 'día';
       sizes={sizes}
       formats={['avif', 'webp']}
       loading="lazy"
-      pictureAttributes={{ class: 'block h-full w-full' }}
+      pictureAttributes={{ class: 'parallax block h-full w-full' }}
       class="h-full w-full object-cover motion-safe:transition-transform motion-safe:duration-500 group-hover:scale-105 group-focus-visible:scale-105"
     />
     <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" aria-hidden="true"></div>

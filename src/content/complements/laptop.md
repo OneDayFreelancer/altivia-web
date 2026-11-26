@@ -2,7 +2,7 @@
 name: Laptop
 category: tecnologia
 image:
-  src: ../../assets/complements/placeholder.jpg
+  src: ../../assets/complements/laptop.jpg
   alt: Laptop para presentaciones
 pricing: evento
 price: 40

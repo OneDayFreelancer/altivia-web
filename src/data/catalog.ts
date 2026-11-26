@@ -8,7 +8,6 @@ export const SPACE_TYPES = [
 
 export const LOCATIONS = [
   { value: 'magdalena', label: 'Magdalena' },
-  { value: 'miraflores', label: 'Miraflores' },
   { value: 'san-borja', label: 'San Borja' },
 ] as const;
 
@@ -20,7 +19,14 @@ export const COMPLEMENT_CATEGORIES = [
   { value: 'otros', label: 'Otros' },
 ] as const;
 
-export const PRICE_UNITS = ['hora', 'dia'] as const;
+export const PRICE_UNITS = ['hora', 'dia', 'turno'] as const;
+
+/** Texto de cada unidad en "S/ 185 / turno". */
+export const PRICE_UNIT_LABEL: Record<(typeof PRICE_UNITS)[number], string> = {
+  hora: 'hora',
+  dia: 'día',
+  turno: 'turno',
+};
 
 type Values<T extends readonly { value: string }[]> = T[number]['value'];
 export type SpaceType = Values<typeof SPACE_TYPES>;

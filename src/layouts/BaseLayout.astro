@@ -1,7 +1,9 @@
 ---
+import { getImage } from 'astro:assets';
 import Header from '@/components/sections/Header.astro';
 import WhatsAppFab from '@/components/ui/WhatsAppFab.astro';
 import { SITE } from '@/config/site';
+import { HERO } from '@/data/hero';
 import '@/styles/global.css';
 
 interface Props {
@@ -15,6 +17,10 @@ interface Props {
   whatsappFab?: boolean;
   /** Clases de posición del botón flotante. */
   fabClass?: string;
+  /** Páginas privadas o sin valor de búsqueda. */
+  noindex?: boolean;
+  /** Datos estructurados schema.org. */
+  jsonLd?: Record<string, unknown>;
 }
 
 const {
@@ -24,31 +30,45 @@ const {
   solidHeader = false,
   whatsappFab = false,
   fabClass,
+  noindex = false,
+  jsonLd,
 } = Astro.props;
-const pageTitle = title ? `${title} | ${SITE.name}` : SITE.name;
-const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : undefined;
+const pageTitle = title ? `${title} | ${SITE.name}` : SITE.title;
+const canonical = Astro.site && !noindex ? new URL(Astro.url.pathname, Astro.site).href : undefined;
+// Sin imagen propia, se comparte la del hero.
+const shareImage =
+  image ??
+  new URL(
+    (await getImage({ src: HERO.image, width: 1200, height: 630, format: 'jpg' })).src,
+    Astro.site,
+  ).href;
 ---
 
 <!doctype html>
 <html lang={SITE.locale}>
   <head>
     <meta charset="utf-8" />
+    <meta name="color-scheme" content="dark" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
     <meta name="generator" content={Astro.generator} />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" href="/favicon.ico" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
     {canonical && <link rel="canonical" href={canonical} />}
+    {noindex && <meta name="robots" content="noindex" />}
+    <meta property="og:locale" content="es_PE" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content={SITE.name} />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
     {canonical && <meta property="og:url" content={canonical} />}
-    {image && <meta property="og:image" content={image} />}
-    <meta name="twitter:card" content={image ? 'summary_large_image' : 'summary'} />
+    <meta property="og:image" content={shareImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    {jsonLd && (
+      <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')} />
+    )}
     <title>{pageTitle}</title>
   </head>
-  <body class="bg-white font-sans text-neutral-900 antialiased">
+  <body class="bg-surface font-sans text-text antialiased">
     <Header solid={solidHeader} />
     <main id="main">
       <slot />

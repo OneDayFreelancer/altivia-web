@@ -119,7 +119,7 @@ export default function AuthNav({ loginLabel, loginHref, signUpLabel, signUpHref
         {open && (
           <div
             id="user-menu"
-            class="absolute right-0 top-full mt-2 min-w-44 rounded-card border border-white/10 bg-dark p-1 shadow-soft"
+            class="absolute right-0 top-full mt-2 min-w-44 rounded-card border border-white/10 bg-black p-1 shadow-soft"
           >
             <a href="/mis-reservas" class={`${logoutClass} block w-full`}>
               Mis reservas

@@ -5,9 +5,9 @@
  * DATOS DE PRUEBA: reemplazar imágenes y textos con los reales del cliente.
  */
 import type { ImageMetadata } from 'astro';
-import jardin from '@/assets/spaces/jardin-1.jpg';
-import parrilla from '@/assets/spaces/parrilla-1.jpg';
-import sum from '@/assets/spaces/sum-1.jpg';
+import jardin from '@/assets/spaces/magdalena/jardin-1.jpg';
+import parrilla from '@/assets/spaces/magdalena/parrilla-1.jpg';
+import sum from '@/assets/spaces/magdalena/sum-1.jpg';
 import type { SpaceType } from '@/data/catalog';
 
 export const SPACE_TYPES_SECTION = {

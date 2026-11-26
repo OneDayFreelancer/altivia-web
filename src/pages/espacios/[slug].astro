@@ -5,6 +5,7 @@ import ReservationBuilder, { type ComplementOption } from '@/components/islands/
 import ReserveButton from '@/components/islands/ReserveButton';
 import SpaceGallery from '@/components/islands/SpaceGallery';
 import Button from '@/components/ui/Button.astro';
+import { PRICE_UNIT_LABEL } from '@/data/catalog';
 import { getSpaceComplements, getSpaces, LOCATIONS, SPACE_TYPES } from '@/data/spaces';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { parseSlot, type TimeSlot, WEEKDAYS } from '@/lib/quote';
@@ -20,8 +21,8 @@ const { name, type, location, maxCapacity, priceFrom, priceUnit, images, ameniti
 
 const typeLabel = SPACE_TYPES.find((t) => t.value === type)?.label ?? type;
 const locationLabel = LOCATIONS.find((l) => l.value === location)?.label ?? location;
-const unit = priceUnit === 'hora' ? 'hora' : 'día';
-const hourly = priceUnit === 'hora';
+const unit = PRICE_UNIT_LABEL[priceUnit];
+const reservable = priceUnit !== 'dia';
 
 // Turnos por día de la semana (0 = domingo): el día específico reemplaza al `default`.
 const { schedule } = space.data;
@@ -61,13 +62,27 @@ const gallery = await Promise.all(
 const og = await getImage({ src: images[0].src, width: 1200, height: 630, format: 'jpg' });
 const ogImage = new URL(og.src, Astro.site).href;
 
-const description = `${typeLabel} en ${locationLabel} para hasta ${maxCapacity} personas. Desde S/ ${priceFrom} por ${unit}.`;
+const description = `Alquiler de ${name}: ${typeLabel} en ${locationLabel}, Lima, para hasta ${maxCapacity} personas. Desde S/ ${priceFrom} por ${unit}.`;
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { name: 'Inicio', path: '/' },
+    { name: 'Alquilar', path: '/alquilar/' },
+    { name, path: `/espacios/${space.id}/` },
+  ].map((item, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name: item.name,
+    item: new URL(item.path, Astro.site).href,
+  })),
+};
 const quoteHref = whatsappHref(
   `Hola, quiero cotizar ${name} (${locationLabel}). ¿Tienen disponibilidad?`,
 );
 ---
 
-<BaseLayout title={name} description={description} image={ogImage} solidHeader whatsappFab fabClass="bottom-20 lg:bottom-6">
+<BaseLayout jsonLd={jsonLd} title={name} description={description} image={ogImage} solidHeader whatsappFab fabClass="bottom-20 lg:bottom-6">
   <div class="mx-auto max-w-7xl px-4 pb-28 pt-24 md:px-8 md:pt-28 lg:pb-16">
     <a href="/#espacios" class="mb-6 inline-flex items-center gap-2 text-small font-semibold text-text-muted hover:text-text">
       <span aria-hidden="true">←</span> Volver a espacios
@@ -107,13 +122,14 @@ const quoteHref = whatsappHref(
           </section>
         )}
 
-        {hourly && (
+        {reservable && (
           <ReservationBuilder
             client:load
             spaceSlug={space.id}
             spaceName={name}
             locationLabel={locationLabel}
-            pricePerHour={priceFrom}
+            price={priceFrom}
+            priceUnit={priceUnit}
             maxCapacity={maxCapacity}
             complements={complements}
             slotsByWeekday={slotsByWeekday}
@@ -126,7 +142,7 @@ const quoteHref = whatsappHref(
           <p class="text-small text-text-muted">Precio base</p>
           <p class="text-h2 font-semibold">S/ {priceFrom} <span class="text-body font-medium text-text-muted">/ {unit}</span></p>
           <p class="text-small text-text-muted">Capacidad máxima: {maxCapacity} personas</p>
-          {hourly && <ReserveButton client:load class="w-full" />}
+          {reservable && <ReserveButton client:load class="w-full" />}
           <Button href={quoteHref} variant="outline" class="w-full">Consultar por WhatsApp</Button>
         </div>
       </aside>
@@ -138,6 +154,6 @@ const quoteHref = whatsappHref(
       <span class="block text-small text-text-muted">Desde</span>
       <span class="font-semibold">S/ {priceFrom} / {unit}</span>
     </p>
-    {hourly ? <ReserveButton client:load hideHint /> : <Button href={quoteHref}>Cotizar</Button>}
+    {reservable ? <ReserveButton client:load hideHint /> : <Button href={quoteHref}>Cotizar</Button>}
   </div>
 </BaseLayout>

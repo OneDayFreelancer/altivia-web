@@ -1,6 +1,6 @@
 ---
 import AuthNav from '@/components/islands/AuthNav';
-import { AUTH_LINKS, LOCALES, NAV_ITEMS, SITE } from '@/config/site';
+import { AUTH_LINKS, NAV_ITEMS, SITE } from '@/config/site';
 
 interface Props {
   /** Fondo oscuro opaco, para páginas sin hero oscuro detrás del header. */
@@ -11,11 +11,10 @@ const { solid = false } = Astro.props;
 
 const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
 const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
-const currentLocale = SITE.locale;
 
 const linkBase = 'rounded-pill px-4 py-2 text-small font-semibold transition-colors';
 const linkClass = (href: string) =>
-  `${linkBase} ${isActive(href) ? 'bg-primary text-primary-contrast' : 'text-white hover:bg-white/15'}`;
+  `${linkBase} ${isActive(href) ? 'nav-active bg-primary text-primary-contrast' : 'text-white hover:bg-white/15'}`;
 ---
 
 <header
@@ -23,7 +22,7 @@ const linkClass = (href: string) =>
   class:list={[
     'fixed inset-x-0 top-0 z-50 border-b border-white/10 text-white',
     solid
-      ? 'bg-dark'
+      ? 'bg-black'
       : 'bg-black/30 backdrop-blur-md transition-colors data-[scrolled=true]:bg-black/60',
   ]}
 >
@@ -55,26 +54,6 @@ const linkClass = (href: string) =>
     </nav>
 
     <div class="hidden items-center justify-end gap-3 md:flex">
-      <div role="group" aria-label="Idioma" class="flex items-center gap-1 text-small font-semibold">
-        {
-          LOCALES.map((l) =>
-            l.available ? (
-              <a
-                href="/"
-                lang={l.code}
-                aria-current={l.code === currentLocale ? 'true' : undefined}
-                class={`rounded-pill px-2 py-1 ${l.code === currentLocale ? 'bg-white/15 text-white' : 'text-white/70 hover:text-white'}`}
-              >
-                {l.label}
-              </a>
-            ) : (
-              <span lang={l.code} aria-disabled="true" title="Próximamente" class="px-2 py-1 text-white/60">
-                {l.label}
-              </span>
-            ),
-          )
-        }
-      </div>
       <AuthNav client:load loginLabel={AUTH_LINKS.login.label} loginHref={AUTH_LINKS.login.href} signUpLabel={AUTH_LINKS.signUp.label} signUpHref={AUTH_LINKS.signUp.href} />
     </div>
 
@@ -106,21 +85,6 @@ const linkClass = (href: string) =>
       }
       <div class="mt-3 flex items-center gap-3 border-t border-white/10 pt-4">
         <AuthNav client:load mobile loginLabel={AUTH_LINKS.login.label} loginHref={AUTH_LINKS.login.href} signUpLabel={AUTH_LINKS.signUp.label} signUpHref={AUTH_LINKS.signUp.href} />
-        <div role="group" aria-label="Idioma" class="ml-auto flex items-center gap-1 text-small font-semibold">
-          {
-            LOCALES.map((l) =>
-              l.available ? (
-                <a href="/" lang={l.code} aria-current={l.code === currentLocale ? 'true' : undefined} class={`rounded-pill px-2 py-1 ${l.code === currentLocale ? 'bg-white/15 text-white' : 'text-white/70'}`}>
-                  {l.label}
-                </a>
-              ) : (
-                <span lang={l.code} aria-disabled="true" title="Próximamente" class="px-2 py-1 text-white/60">
-                  {l.label}
-                </span>
-              ),
-            )
-          }
-        </div>
       </div>
     </nav>
   </div>

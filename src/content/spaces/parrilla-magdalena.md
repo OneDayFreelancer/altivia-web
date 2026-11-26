@@ -2,22 +2,24 @@
 name: Parrilla Magdalena
 type: parrilla
 location: magdalena
-maxCapacity: 25
-priceFrom: 120
-priceUnit: hora
+maxCapacity: 12
+priceFrom: 185
+priceUnit: turno
 featuredOrder: 1
 images:
-  - src: ../../assets/spaces/parrilla-1.jpg
-    alt: Carne asada lista para servir en la parrilla de Magdalena
-  - src: ../../assets/spaces/parrilla-2.jpg
-    alt: Parrillada variada con brochetas y salsas
-  - src: ../../assets/spaces/parrilla-3.jpg
+  - src: ../../assets/spaces/magdalena/parrilla-2.jpg
+    alt: Terraza con barra y parrilla iluminada de noche en Magdalena
+  - src: ../../assets/spaces/magdalena/parrilla-1.jpg
+    alt: Terraza con barra y mesa servida de día en Magdalena
+  - src: ../../assets/spaces/magdalena/parrilla-3.jpg
     alt: Costillas a la parrilla servidas en tabla
 schedule:
   default:
-    - "10:00-14:00"
-    - "14:00-18:00"
-    - "18:00-24:00"
+    - "11:00 a.m - 11:59 p.m"
+  viernes:
+    - "11:00 a.m - 02:00 a.m"
+  sabado:
+    - "11:00 a.m - 02:00 a.m"
 amenities:
   - Parrilla a carbón
   - Mesas y bancas
@@ -25,9 +27,7 @@ amenities:
   - Baño privado
 complements:
   - sillas
-  - mesa
   - equipo-de-sonido
-  - barman
 ---
 
-Texto de prueba. Reemplazar con la descripción real de la parrilla de Magdalena: ambiente, distribución y reglas de uso.
+Disfruta de una parrillada entre amigos y familiares en un ambiente acogedor, moderno y al aire libre. El escenario perfecto para crear recuerdos inolvidables.

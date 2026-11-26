@@ -20,7 +20,7 @@ export interface Reservation {
 }
 
 export interface TakenSlot {
-  /** Minutos desde medianoche, acotados al día consultado (0–1440). */
+  /** Minutos desde la medianoche del día consultado; más de 1440 = día siguiente. */
   start: number;
   end: number;
 }
@@ -30,7 +30,7 @@ export const overlaps = (a: TakenSlot, b: TakenSlot): boolean => a.start < b.end
 
 const dayMinutes = (ts: string, date: string): number => {
   if (ts.slice(0, 10) < date) return 0;
-  if (ts.slice(0, 10) > date) return 24 * 60;
+  if (ts.slice(0, 10) > date) return 24 * 60 + toMinutes(ts.slice(11, 16));
   return toMinutes(ts.slice(11, 16));
 };
 
@@ -52,7 +52,7 @@ export interface NewReservation {
   spaceName: string;
   /** `YYYY-MM-DD`. */
   date: string;
-  /** Minutos desde medianoche; `end` puede ser 1440 (medianoche). */
+  /** Minutos desde medianoche; `end` >= 1440 cae al día siguiente. */
   start: number;
   end: number;
   guests: number;
@@ -63,12 +63,12 @@ export interface NewReservation {
 
 const pad = (n: number) => String(n).padStart(2, '0');
 
-/** `date` + minutos → `YYYY-MM-DDTHH:MM:00`; 1440 pasa al día siguiente a las 00:00. */
+/** `date` + minutos → `YYYY-MM-DDTHH:MM:00`; desde 1440 pasa al día siguiente. */
 const stamp = (date: string, minutes: number): string => {
-  if (minutes < 24 * 60) return `${date}T${pad(Math.floor(minutes / 60))}:${pad(minutes % 60)}:00`;
-  const next = new Date(`${date}T12:00:00`);
-  next.setDate(next.getDate() + 1);
-  return `${next.getFullYear()}-${pad(next.getMonth() + 1)}-${pad(next.getDate())}T00:00:00`;
+  const day = new Date(`${date}T12:00:00`);
+  if (minutes >= 24 * 60) day.setDate(day.getDate() + 1);
+  const time = minutes % (24 * 60);
+  return `${day.getFullYear()}-${pad(day.getMonth() + 1)}-${pad(day.getDate())}T${pad(Math.floor(time / 60))}:${pad(time % 60)}:00`;
 };
 
 export async function createReservation(input: NewReservation, userId: string): Promise<void> {

@@ -8,7 +8,7 @@ export interface HeroContent {
 }
 
 export const HERO: HeroContent = {
-  title: 'Build Your Future, One Property at a Time.',
+  title: 'Espacios únicos para momentos inolvidables.',
   image: heroImage,
-  imageAlt: 'Modern house with a pool at dusk',
+  imageAlt: 'Personas compartiendo en una terraza con parrilla al atardecer',
 };

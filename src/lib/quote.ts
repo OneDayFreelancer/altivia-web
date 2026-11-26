@@ -1,5 +1,7 @@
 /** Cálculo de la cotización de un espacio. Funciones puras, sin Astro ni DOM (ONE-23). */
 
+import type { PriceUnit } from '@/data/catalog';
+
 export type Pricing = 'unidad' | 'evento' | 'hora';
 
 export interface QuoteComplement {
@@ -13,8 +15,10 @@ export interface QuoteComplement {
 }
 
 export interface QuoteInput {
-  /** Precio base del espacio por hora. */
-  pricePerHour: number;
+  /** Precio base del espacio, según `priceUnit`. */
+  price: number;
+  /** `turno`: precio fijo por el turno completo. `hora`: se multiplica por las horas. */
+  priceUnit: PriceUnit;
   maxCapacity: number;
   /** `YYYY-MM-DD`. Vacío = sin elegir. */
   date: string;
@@ -49,7 +53,7 @@ export interface Quote {
 }
 
 export const MIN_HOURS = 1;
-export const MAX_HOURS = 14;
+export const MAX_HOURS = 15;
 
 export const clamp = (value: number, min: number, max: number): number => {
   const n = Number.isFinite(value) ? Math.trunc(value) : min;
@@ -62,7 +66,7 @@ export const maxServiceHours = (c: QuoteComplement, rentalHours: number): number
 
 export function buildQuote(input: QuoteInput): Quote {
   const hours = clamp(input.hours, MIN_HOURS, MAX_HOURS);
-  const base = input.pricePerHour * hours;
+  const base = input.priceUnit === 'turno' ? input.price : input.price * hours;
   const warnings: string[] = [];
 
   const lines: QuoteLine[] = [];
@@ -113,15 +117,14 @@ export const toMinutes = (time: string): number => {
   return h * 60 + m;
 };
 
-/** Minutos desde medianoche → `HH:MM` (1440 = 24:00). */
+/** Minutos desde medianoche → `HH:MM` (1440 = 24:00; más de 1440 = día siguiente). */
 export const toTime = (minutes: number): string =>
   `${String(Math.floor(minutes / 60)).padStart(2, '0')}:${String(minutes % 60).padStart(2, '0')}`;
 
-/** `HH:MM` → "10:00 am". El cierre de medianoche (24:00) se muestra como "11:59 pm". */
+/** `HH:MM` → "10:00 am". Medianoche (24:00) es "12:00 am"; "26:00" es "2:00 am". */
 export const formatTime = (time: string): string => {
   const minutes = toMinutes(time);
-  if (minutes >= 24 * 60) return '12:00 am';
-  const h = Math.floor(minutes / 60);
+  const h = Math.floor(minutes / 60) % 24;
   const suffix = h < 12 ? 'am' : 'pm';
   return `${h % 12 === 0 ? 12 : h % 12}:${String(minutes % 60).padStart(2, '0')} ${suffix}`;
 };
@@ -129,7 +132,7 @@ export const formatTime = (time: string): string => {
 export interface TimeSlot {
   /** Minutos desde medianoche. */
   start: number;
-  /** Minutos desde medianoche; 1440 = 12:00 am. */
+  /** Minutos desde la medianoche inicial; más de 1440 = termina al día siguiente. */
   end: number;
 }
 
@@ -144,13 +147,33 @@ export const WEEKDAYS = [
   'sabado',
 ] as const;
 
-/** `"10:00-14:00"` → turno. `24:00` es válido como fin. Devuelve `null` si el formato no es válido. */
-export const parseSlot = (text: string): TimeSlot | null => {
-  const m = /^(\d{2}):(\d{2})-(\d{2}):(\d{2})$/.exec(text);
+/** Hora más tardía a la que puede terminar un turno que cruza la medianoche. */
+const LATEST_OVERNIGHT_END = 6 * 60;
+
+/** `"11:00"`, `"11:00 am"` o `"11:00 p.m."` → minutos desde medianoche; `null` si no es válida. */
+const parseClock = (text: string): number | null => {
+  const m = /^(\d{1,2}):(\d{2})(?:\s*([ap])\.?\s?m\.?)?$/i.exec(text.trim());
   if (!m) return null;
-  const start = Number(m[1]) * 60 + Number(m[2]);
-  const end = Number(m[3]) * 60 + Number(m[4]);
-  return Number(m[2]) < 60 && Number(m[4]) < 60 && start < end && end <= 24 * 60
-    ? { start, end }
-    : null;
+  const hour = Number(m[1]);
+  const minute = Number(m[2]);
+  const period = m[3]?.toLowerCase();
+  if (minute >= 60 || (period && (hour < 1 || hour > 12))) return null;
+  if (!period) return hour * 60 + minute;
+  return ((hour % 12) + (period === 'p' ? 12 : 0)) * 60 + minute;
+};
+
+/**
+ * `"11:00 a.m - 02:00 a.m"` o `"11:00-02:00"` → turno. Medianoche como fin (`12:00 a.m` o
+ * `24:00`) es válida y un fin de madrugada cae al día siguiente. Devuelve `null` si el formato
+ * no es válido.
+ */
+export const parseSlot = (text: string): TimeSlot | null => {
+  const [from, to, ...rest] = text.split('-');
+  if (to === undefined || rest.length > 0) return null;
+  const start = parseClock(from);
+  const rawEnd = parseClock(to);
+  if (start === null || rawEnd === null) return null;
+  const overnight = rawEnd <= LATEST_OVERNIGHT_END && rawEnd < start;
+  const end = overnight ? rawEnd + 24 * 60 : rawEnd;
+  return start < end && (overnight || end <= 24 * 60) ? { start, end } : null;
 };

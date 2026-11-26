@@ -26,7 +26,7 @@ const cards = SPACE_TYPE_CARDS.map((card) => ({
         <li>
           <a
             href={card.href}
-            class="group relative block aspect-[4/5] overflow-hidden rounded-card bg-surface-alt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
+            class="group relative block aspect-[4/5] overflow-clip bg-surface-alt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
           >
             <Picture
               src={card.image}
@@ -35,7 +35,7 @@ const cards = SPACE_TYPE_CARDS.map((card) => ({
               sizes="(min-width: 768px) 33vw, 100vw"
               formats={['avif', 'webp']}
               loading="lazy"
-              pictureAttributes={{ class: 'block h-full w-full' }}
+              pictureAttributes={{ class: 'parallax block h-full w-full' }}
               class="h-full w-full object-cover motion-safe:transition-transform motion-safe:duration-500 group-hover:scale-105 group-focus-visible:scale-105"
             />
             <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent" aria-hidden="true" />
@@ -46,9 +46,9 @@ const cards = SPACE_TYPE_CARDS.map((card) => ({
               </div>
               <span
                 aria-hidden="true"
-                class="flex size-10 shrink-0 items-center justify-center rounded-full bg-white text-black motion-safe:transition-transform group-hover:translate-x-1 group-focus-visible:translate-x-1"
+                class="flex size-10 shrink-0 items-center justify-center rounded-full bg-white text-black"
               >
-                →
+                <span class="inline-block motion-safe:transition-transform motion-safe:duration-300 group-hover:rotate-45 group-focus-visible:rotate-45">→</span>
               </span>
             </div>
           </a>

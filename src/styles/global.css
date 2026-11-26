@@ -2,8 +2,8 @@
 @import "@fontsource-variable/montserrat";
 
 /*
- * Design tokens (ONE-7). Referencia visual: diseño "Finpro" (blanco, negro, grises) con acento verde lima.
- * Contraste AA verificado: text 19:1, text-muted 5.7:1 sobre blanco; texto oscuro sobre lima 16:1.
+ * Design tokens (ONE-7). Tema oscuro (negro y grises) con acento verde lima.
+ * `dark` es el color de énfasis inverso al fondo (aquí claro): botones, bordes y marcas activas.
  */
 @theme {
   --font-sans: "Montserrat Variable", ui-sans-serif, system-ui, sans-serif;
@@ -12,15 +12,15 @@
   --color-primary: #c8f53c;
   --color-primary-hover: #b3df2a;
   --color-primary-contrast: #0a0a0a;
-  --color-dark: #0a0a0a;
-  --color-dark-hover: #262626;
-  --color-dark-contrast: #ffffff;
-  --color-text: #0a0a0a;
-  --color-text-muted: #666666;
-  --color-surface: #ffffff;
-  --color-surface-alt: #f7f7f7;
-  --color-border: #e5e5e5;
-  --color-focus: #0a0a0a;
+  --color-dark: #f5f5f5;
+  --color-dark-hover: #d4d4d4;
+  --color-dark-contrast: #0a0a0a;
+  --color-text: #f5f5f5;
+  --color-text-muted: #a3a3a3;
+  --color-surface: #121212;
+  --color-surface-alt: #1c1c1c;
+  --color-border: #333333;
+  --color-focus: #c8f53c;
 
   /* Tipografía (tamaño / interlineado) */
   --text-h1: 3.5rem;
@@ -41,12 +41,148 @@
   --radius-pill: 9999px;
 
   /* Sombras */
-  --shadow-soft: 0 8px 30px rgb(0 0 0 / 0.08);
+  --shadow-soft: 0 8px 30px rgb(0 0 0 / 0.5);
 }
 
 @layer base {
+  /* Controles nativos (fecha, listas, scroll) en oscuro. */
+  :root {
+    color-scheme: dark;
+  }
+
+  /* Tailwind v4 deja el cursor por defecto en botones: se muestra la manito. */
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  select:not(:disabled),
+  summary,
+  label:has(> input[type="checkbox"]),
+  input:is([type="checkbox"], [type="radio"], [type="file"], [type="date"]):not(:disabled) {
+    cursor: pointer;
+  }
+
   :focus-visible {
     outline: 2px solid var(--color-focus);
     outline-offset: 2px;
+  }
+}
+
+/*
+ * Animaciones solo CSS. Se omiten si el usuario pide reducir movimiento.
+ * El parallax usa `animation-timeline`; sin soporte, las imágenes quedan quietas.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .rise-in {
+    animation: rise-in 0.8s ease-out both;
+  }
+
+  .rise-in-late {
+    animation: rise-in 0.8s ease-out 0.25s both;
+  }
+
+  .zoom-out {
+    animation: zoom-out 1.6s ease-out both;
+  }
+
+  /* Aparición al llegar con el scroll. Las clases las pone el script de la home. */
+  .will-reveal {
+    opacity: 0;
+    translate: 0 2.5rem;
+    transition:
+      opacity 0.7s ease-out var(--delay, 0ms),
+      translate 0.7s ease-out var(--delay, 0ms);
+  }
+
+  .will-reveal.is-visible {
+    opacity: 1;
+    translate: 0 0;
+  }
+
+  @supports (animation-timeline: view()) {
+    /* Parallax. El contenedor debe usar `overflow-clip`, no `overflow-hidden`. */
+    .parallax,
+    .parallax-hero {
+      --parallax-timeline: view();
+      animation: parallax linear both;
+      animation-timeline: var(--parallax-timeline);
+    }
+
+    .parallax-hero {
+      animation-name: parallax-hero;
+      animation-range: exit;
+    }
+  }
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(2rem);
+  }
+}
+
+@keyframes zoom-out {
+  from {
+    transform: scale(1.08);
+  }
+}
+
+@keyframes parallax {
+  from {
+    transform: translateY(-7%) scale(1.16);
+  }
+  to {
+    transform: translateY(7%) scale(1.16);
+  }
+}
+
+@keyframes parallax-hero {
+  to {
+    transform: translateY(25%);
+  }
+}
+
+/*
+ * Transiciones entre páginas (View Transitions entre documentos, solo CSS).
+ * Sin soporte, la navegación es la normal.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition {
+    navigation: auto;
+  }
+
+  /* Nombre propio: el header queda fijo mientras cambia el contenido. */
+  body > header {
+    view-transition-name: site-header;
+  }
+
+  /* La píldora del enlace activo se desliza entre opciones del menú. */
+  .nav-active {
+    view-transition-name: nav-active;
+  }
+
+  ::view-transition-group(nav-active) {
+    animation-duration: 0.45s;
+    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  ::view-transition-old(root) {
+    animation: 0.2s ease-in both page-out;
+  }
+
+  ::view-transition-new(root) {
+    animation: 0.35s ease-out 0.1s both page-in;
+  }
+}
+
+@keyframes page-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(1rem);
   }
 }

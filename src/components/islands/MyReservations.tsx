@@ -15,7 +15,7 @@ const STATUS: Record<ReservationStatus, { label: string; cls: string }> = {
   pendiente: { label: 'Pendiente de confirmación', cls: 'border-border bg-surface-alt' },
   confirmada: { label: 'Confirmada', cls: 'border-dark bg-dark text-dark-contrast' },
   cancelada: { label: 'Cancelada', cls: 'border-border text-text-muted line-through' },
-  rechazada: { label: 'Rechazada', cls: 'border-red-700 text-red-800' },
+  rechazada: { label: 'Rechazada', cls: 'border-red-400 text-red-200' },
 };
 
 const time = (ts: string) => {
@@ -83,7 +83,7 @@ export default function MyReservations() {
       )}
       {error && (
         <p
-          class="rounded-md border border-red-700 bg-red-50 p-3 text-small text-red-800"
+          class="rounded-md border border-red-400 bg-red-950 p-3 text-small text-red-200"
           role="alert"
         >
           {error}

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'preact/hooks';
+import type { PriceUnit } from '@/data/catalog';
 import {
   buildQuote,
   clamp,
@@ -36,7 +37,8 @@ interface Props {
   spaceSlug: string;
   spaceName: string;
   locationLabel: string;
-  pricePerHour: number;
+  price: number;
+  priceUnit: PriceUnit;
   maxCapacity: number;
   complements: ComplementOption[];
   /** Turnos por día de la semana (índice de `Date.getDay()`, 0 = domingo). */
@@ -55,10 +57,10 @@ const PRICING_LABEL: Record<Pricing, (c: ComplementOption) => string> = {
 };
 
 const field =
-  'w-full rounded-md border border-border aria-[invalid=true]:border-red-700 bg-surface px-3 py-2 text-body text-text focus-visible:outline-2 focus-visible:outline-offset-1';
+  'w-full rounded-md border border-border aria-[invalid=true]:border-red-400 bg-surface px-3 py-2 text-body text-text focus-visible:outline-2 focus-visible:outline-offset-1';
 const label = 'flex flex-col gap-1 text-small font-semibold';
 const stepper =
-  'inline-flex size-9 items-center justify-center rounded-pill border border-border bg-surface text-body font-semibold hover:bg-surface-alt disabled:cursor-not-allowed disabled:opacity-40';
+  'inline-flex size-7 items-center justify-center rounded-pill border border-border bg-surface text-body font-semibold hover:bg-surface-alt disabled:cursor-not-allowed disabled:opacity-40';
 
 const localToday = () => {
   const d = new Date();
@@ -119,7 +121,8 @@ export default function ReservationBuilder({
   spaceSlug,
   spaceName,
   locationLabel,
-  pricePerHour,
+  price,
+  priceUnit,
   maxCapacity,
   complements,
   slotsByWeekday,
@@ -220,7 +223,8 @@ export default function ReservationBuilder({
   const quote = useMemo(
     () =>
       buildQuote({
-        pricePerHour,
+        price,
+        priceUnit,
         maxCapacity,
         date,
         startTime: hours > 0 ? startTime : '',
@@ -231,7 +235,8 @@ export default function ReservationBuilder({
         today: today || '0000-00-00',
       }),
     [
-      pricePerHour,
+      price,
+      priceUnit,
       maxCapacity,
       date,
       startTime,
@@ -390,68 +395,66 @@ export default function ReservationBuilder({
               return (
                 <li
                   key={c.slug}
-                  class={`flex flex-col gap-3 rounded-card border p-3 transition-colors ${picked ? 'border-dark bg-surface-alt' : 'border-border bg-surface'}`}
+                  class={`flex gap-3 rounded-card border p-2.5 transition-colors ${picked ? 'border-dark bg-surface-alt' : 'border-border bg-surface'}`}
                 >
-                  <div class="flex gap-3">
+                  <div class="size-16 shrink-0 overflow-clip">
                     <img
                       src={c.image}
                       alt={c.alt}
-                      width={80}
-                      height={80}
+                      width={64}
+                      height={64}
                       loading="lazy"
                       decoding="async"
-                      class="size-20 shrink-0 rounded-md object-cover"
+                      class="parallax size-full object-cover"
                     />
-                    <div class="flex min-w-0 flex-col gap-1">
-                      <label for={id} class="flex cursor-pointer items-start gap-2 font-semibold">
-                        <input
-                          id={id}
-                          type="checkbox"
-                          class="mt-1 size-4 shrink-0 accent-dark"
-                          checked={Boolean(picked)}
-                          onChange={(e) => toggle(c, e.currentTarget.checked)}
-                        />
-                        {c.name}
-                      </label>
-                      <p class="text-small text-text-muted">{PRICING_LABEL[c.pricing](c)}</p>
-                      {c.capacity && (
-                        <p class="text-small text-text-muted">
-                          Cubre {c.capacity} {c.capacity === 1 ? 'persona' : 'personas'} por unidad
-                        </p>
-                      )}
-                    </div>
                   </div>
-
-                  {picked && (
-                    <div class="flex flex-wrap items-center gap-x-6 gap-y-2 text-small">
-                      {c.maxQuantity > 1 && (
-                        <div class="flex items-center gap-2">
-                          <span>Cantidad</span>
-                          <Stepper
-                            name={c.name}
-                            unit="cantidad"
-                            value={clamp(picked.quantity, 1, c.maxQuantity)}
-                            min={1}
-                            max={c.maxQuantity}
-                            onChange={(v) => update(c.slug, { quantity: v })}
-                          />
-                        </div>
-                      )}
-                      {c.pricing === 'hora' && (
-                        <div class="flex items-center gap-2">
-                          <span>Horas</span>
-                          <Stepper
-                            name={c.name}
-                            unit="horas"
-                            value={clamp(picked.hours, 1, serviceMax)}
-                            min={1}
-                            max={serviceMax}
-                            onChange={(v) => update(c.slug, { hours: v })}
-                          />
-                        </div>
-                      )}
-                    </div>
-                  )}
+                  <div class="flex min-w-0 flex-col gap-0.5">
+                    <label for={id} class="flex cursor-pointer items-start gap-2 font-semibold">
+                      <input
+                        id={id}
+                        type="checkbox"
+                        class="mt-1 size-4 shrink-0 accent-dark"
+                        checked={Boolean(picked)}
+                        onChange={(e) => toggle(c, e.currentTarget.checked)}
+                      />
+                      {c.name}
+                    </label>
+                    <p class="text-small text-text-muted">
+                      {PRICING_LABEL[c.pricing](c)}
+                      {c.capacity &&
+                        ` · cubre ${c.capacity} ${c.capacity === 1 ? 'persona' : 'personas'}`}
+                    </p>
+                    {picked && (
+                      <div class="mt-1 flex flex-wrap items-center gap-x-4 gap-y-2 text-small">
+                        {c.maxQuantity > 1 && (
+                          <div class="flex items-center gap-2">
+                            <span>Cantidad</span>
+                            <Stepper
+                              name={c.name}
+                              unit="cantidad"
+                              value={clamp(picked.quantity, 1, c.maxQuantity)}
+                              min={1}
+                              max={c.maxQuantity}
+                              onChange={(v) => update(c.slug, { quantity: v })}
+                            />
+                          </div>
+                        )}
+                        {c.pricing === 'hora' && (
+                          <div class="flex items-center gap-2">
+                            <span>Horas</span>
+                            <Stepper
+                              name={c.name}
+                              unit="horas"
+                              value={clamp(picked.hours, 1, serviceMax)}
+                              min={1}
+                              max={serviceMax}
+                              onChange={(v) => update(c.slug, { hours: v })}
+                            />
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </li>
               );
             })}
@@ -480,7 +483,9 @@ export default function ReservationBuilder({
         <ul class="flex flex-col gap-1 border-t border-border pt-3 text-small">
           <li class="flex justify-between gap-4">
             <span>
-              Espacio ({money.format(pricePerHour)} × {hours} h)
+              {priceUnit === 'turno'
+                ? 'Espacio (turno completo)'
+                : `Espacio (${money.format(price)} × ${hours} h)`}
             </span>
             <span>{money.format(quote.base)}</span>
           </li>

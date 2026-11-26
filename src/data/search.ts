@@ -1,6 +1,6 @@
 /**
  * Opciones del buscador (ONE-10). Editar aquí tipos, rangos de precio y locales.
- * Rangos de precio de PRUEBA (S/ por hora), reemplazar con los reales del cliente.
+ * Rangos de precio de PRUEBA (S/ por turno), reemplazar con los reales del cliente.
  * Los tipos y locales vienen de `catalog.ts`.
  */
 export { LOCATIONS, SPACE_TYPES } from '@/data/catalog';

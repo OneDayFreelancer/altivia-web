@@ -1,0 +1,49 @@
+---
+import PublishForm from '@/components/islands/PublishForm';
+import { PUBLISH_BENEFITS, PUBLISH_REQUIREMENTS, REVIEW_TIME } from '@/data/publish';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Publica tu terraza"
+  description="Registra tu terraza, parrilla, jardín o salón en Altivia para alquilarlo para eventos en Lima."
+  solidHeader
+>
+  <section class="mx-auto flex max-w-2xl flex-col gap-6 px-4 pb-24 pt-36 md:px-8">
+    <div class="flex flex-col gap-2">
+      <h1 class="text-3xl font-semibold text-balance md:text-h2">Publica tu terraza</h1>
+      <p class="text-body text-text-muted">
+        Cuéntanos sobre tu espacio. Nuestro equipo revisa la solicitud antes de publicarlo.
+      </p>
+    </div>
+
+    <section aria-labelledby="why-title" class="flex flex-col gap-3">
+      <h2 id="why-title" class="text-h3 font-semibold">¿Por qué publicar tu terraza?</h2>
+      <ul class="grid gap-3 sm:grid-cols-3">
+        {PUBLISH_BENEFITS.map((b) => (
+          <li class="flex flex-col gap-1 rounded-card border border-border p-4">
+            <h3 class="text-body font-semibold">{b.title}</h3>
+            <p class="text-small text-text-muted">{b.text}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section aria-labelledby="terms-title" class="flex flex-col gap-3">
+      <h2 id="terms-title" class="text-h3 font-semibold">Condiciones que debe cumplir</h2>
+      <ul class="flex list-disc flex-col gap-1 pl-5 text-body">
+        {PUBLISH_REQUIREMENTS.map((r) => <li>{r}</li>)}
+      </ul>
+    </section>
+
+    <section aria-labelledby="review-title" class="flex flex-col gap-1 rounded-card bg-surface-alt p-5">
+      <h2 id="review-title" class="text-h4 font-semibold">¿Cuánto demora la revisión?</h2>
+      <p class="text-body">
+        Revisamos tu solicitud en <strong>{REVIEW_TIME}</strong> y te contactamos al celular que indiques.
+      </p>
+    </section>
+
+    <h2 class="text-h3 font-semibold">Registra tu espacio</h2>
+    <PublishForm client:load />
+  </section>
+</BaseLayout>

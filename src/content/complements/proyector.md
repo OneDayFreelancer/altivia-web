@@ -2,7 +2,7 @@
 name: Proyector
 category: audiovisual
 image:
-  src: ../../assets/complements/placeholder.jpg
+  src: ../../assets/complements/proyector.jpg
   alt: Proyector con pantalla de proyección
 pricing: evento
 price: 80
