@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://altivia.lat/sitemap.xml
+Sitemap: https://altivia.lat/sitemap-index.xml
